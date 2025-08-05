@@ -1,0 +1,64 @@
+{
+  "name": "Evan Steitz",
+  "title": "Software Developer",
+  "summary": "Passionate full-stack developer with expertise in modern web technologies and a focus on creating innovative, user-friendly solutions.",
+  "contact": {
+    "email": "evan@example.com",
+    "github": "evansteitz",
+    "linkedin": "evansteitz",
+    "website": "evansteitz.com"
+  },
+  "experience": [
+    {
+      "company": "Tech Company",
+      "position": "Senior Software Developer",
+      "location": "Remote",
+      "startDate": "2022",
+      "endDate": "Present",
+      "description": [
+        "Led development of microservices architecture using Node.js and TypeScript",
+        "Implemented CI/CD pipelines reducing deployment time by 60%",
+        "Mentored junior developers and conducted code reviews"
+      ]
+    },
+    {
+      "company": "Startup Inc",
+      "position": "Full Stack Developer",
+      "location": "San Francisco, CA",
+      "startDate": "2020",
+      "endDate": "2022",
+      "description": [
+        "Built responsive web applications using React and Next.js",
+        "Designed and implemented RESTful APIs with Express.js",
+        "Optimized database queries improving performance by 40%"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University Name",
+      "degree": "Bachelor of Science",
+      "field": "Computer Science",
+      "startDate": "2016",
+      "endDate": "2020"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Languages",
+      "items": ["TypeScript", "JavaScript", "Python", "Go", "SQL"]
+    },
+    {
+      "category": "Frontend",
+      "items": ["React", "Next.js", "Vue", "HTML/CSS", "Tailwind"]
+    },
+    {
+      "category": "Backend",
+      "items": ["Node.js", "Express", "PostgreSQL", "MongoDB", "Redis"]
+    },
+    {
+      "category": "Tools",
+      "items": ["Git", "Docker", "AWS", "CI/CD", "Terraform"]
+    }
+  ]
+}

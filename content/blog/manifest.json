@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "building-command-line-portfolio",
+    "title": "Building a Command-Line Portfolio with TypeScript",
+    "date": "2024-01-15",
+    "tags": ["typescript", "web", "portfolio"],
+    "excerpt": "Learn how I built this interactive command-line portfolio using TypeScript and neobrutalist design principles."
+  },
+  {
+    "slug": "microservices-best-practices",
+    "title": "Microservices Best Practices in 2024",
+    "date": "2024-01-10",
+    "tags": ["architecture", "microservices", "backend"],
+    "excerpt": "Lessons learned from building and scaling microservices in production environments."
+  }
+]

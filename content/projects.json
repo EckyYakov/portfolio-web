@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1",
+    "title": "E-Commerce Platform",
+    "description": "A full-stack e-commerce solution built with Next.js and Stripe integration. Features include real-time inventory management, secure payment processing, and an admin dashboard for analytics.",
+    "technologies": ["Next.js", "TypeScript", "PostgreSQL", "Stripe", "Tailwind CSS"],
+    "url": "https://example-ecommerce.com",
+    "github": "https://github.com/evansteitz/ecommerce-platform",
+    "featured": true
+  },
+  {
+    "id": "2",
+    "title": "Task Management API",
+    "description": "RESTful API for a task management system with authentication, real-time updates via WebSockets, and comprehensive testing coverage.",
+    "technologies": ["Node.js", "Express", "MongoDB", "Socket.io", "Jest"],
+    "github": "https://github.com/evansteitz/task-api",
+    "featured": true
+  },
+  {
+    "id": "3",
+    "title": "Weather Dashboard",
+    "description": "Interactive weather dashboard with location-based forecasts, historical data visualization, and customizable alerts.",
+    "technologies": ["React", "D3.js", "OpenWeather API", "Styled Components"],
+    "url": "https://weather.example.com",
+    "github": "https://github.com/evansteitz/weather-dashboard",
+    "featured": false
+  },
+  {
+    "id": "4",
+    "title": "CLI Development Tools",
+    "description": "Collection of command-line tools for developers including project scaffolding, git workflow automation, and productivity utilities.",
+    "technologies": ["Go", "Cobra", "GitHub API"],
+    "github": "https://github.com/evansteitz/dev-tools",
+    "featured": false
+  }
+]

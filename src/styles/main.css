@@ -1,0 +1,335 @@
+/* CSS Variables */
+:root {
+  --color-background: #FFFFFF;
+  --color-foreground: #000000;
+  --color-accent: #0066FF;
+  --color-accent-alt: #FF0066;
+  --color-border: #000000;
+  --color-shadow: #000000;
+  
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  
+  --border-width: 4px;
+  --shadow-offset: 8px;
+  --radius: 0px;
+}
+
+[data-theme="dark"] {
+  --color-background: #0A0A0A;
+  --color-foreground: #FFFFFF;
+  --color-accent: #3399FF;
+  --color-accent-alt: #FF3366;
+  --color-border: #FFFFFF;
+  --color-shadow: #FFFFFF;
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#app {
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* Neobrutalist Elements */
+.brutal-box {
+  background-color: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+  transition: all 0.3s ease;
+}
+
+.brutal-box:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0 var(--color-shadow);
+}
+
+.brutal-button {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: 4px 4px 0 var(--color-shadow);
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.brutal-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-shadow);
+}
+
+.brutal-heading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Terminal Styles */
+.terminal-wrapper {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Intro Text */
+.intro-text {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.intro-text p {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-foreground);
+  line-height: 1.2;
+}
+
+/* Content Window */
+.content-window {
+  padding: 2rem 0;
+  margin-top: 1rem;
+}
+
+.command-response {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-foreground);
+}
+
+.output-line {
+  margin-bottom: 1rem;
+  font-family: var(--font-sans);
+}
+
+.output-line.command {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.output-line.response {
+  color: var(--color-foreground);
+}
+
+/* Input Area */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.command-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.25rem;
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  width: 100%;
+}
+
+.command-input::placeholder {
+  color: var(--color-foreground);
+  opacity: 0.5;
+}
+
+/* Autocomplete */
+.autocomplete-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+  display: none;
+  z-index: 10;
+}
+
+.autocomplete-container.visible {
+  display: block;
+}
+
+.autocomplete-item {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+.suggestion-name strong {
+  color: var(--color-accent-alt);
+}
+
+.autocomplete-item:hover .suggestion-name strong,
+.autocomplete-item.selected .suggestion-name strong {
+  color: var(--color-background);
+}
+
+.suggestion-desc {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.command-hint,
+.key-hint {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+/* Help Command Styles */
+.help-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.command-list {
+  margin-bottom: 2rem;
+}
+
+.command-item {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  gap: 2rem;
+}
+
+.command-name {
+  font-weight: 700;
+  font-family: monospace;
+  font-size: 1.125rem;
+  color: var(--color-accent);
+  min-width: 150px;
+}
+
+.command-desc {
+  color: var(--color-foreground);
+}
+
+.help-tips h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.help-tips ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.help-tips li {
+  margin-bottom: 0.5rem;
+}
+
+/* About Command Styles */
+.about-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.about-text p {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}
+
+.quick-links {
+  margin-top: 2rem;
+}
+
+.quick-links h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.command-suggestions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.suggestion-chip {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  border: 2px solid var(--color-border);
+  box-shadow: 2px 2px 0 var(--color-shadow);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestion-chip:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-shadow);
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .terminal-wrapper {
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 95vw;
+  }
+
+  .intro-text p {
+    font-size: 1.125rem;
+  }
+
+  .command-item {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .command-name {
+    min-width: auto;
+  }
+
+  .brutal-box {
+    box-shadow: 4px 4px 0 var(--color-shadow);
+  }
+
+  .brutal-box:hover {
+    box-shadow: 6px 6px 0 var(--color-shadow);
+  }
+}
