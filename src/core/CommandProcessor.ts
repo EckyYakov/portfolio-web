@@ -1,4 +1,5 @@
 import type { Command, CommandResponse, AutocompleteSuggestion } from '@/types';
+import { QuickSuggestions } from '@/ui/QuickSuggestions';
 
 export class CommandProcessor {
   private commands: Map<string, Command>;
@@ -29,6 +30,45 @@ export class CommandProcessor {
 
     // Check if command starts with /
     if (!trimmedInput.startsWith('/')) {
+      // Handle easter eggs for non-command input
+      const lowerInput = trimmedInput.toLowerCase();
+      
+      if (lowerInput === 'hello') {
+        const content = document.createElement('div');
+        content.innerHTML = `
+          <div class="easter-egg-response">
+            <p><strong>Hello! How are you? 👋</strong></p>
+            <p>Welcome to my portfolio terminal! Here are some commands to get you started:</p>
+          </div>
+          ${QuickSuggestions.generate(QuickSuggestions.HELP_RELATED, 'Quick Commands')}
+          <p style="margin-top: 1rem; font-style: italic;">Type any command starting with "/" to explore!</p>
+        `;
+        return {
+          content,
+          type: 'html'
+        };
+      }
+      
+      if (lowerInput === 'ping') {
+        const content = document.createElement('div');
+        content.innerHTML = `
+          <div class="easter-egg-response">
+            <p><strong>pong 🏓</strong></p>
+            <p style="font-style: italic;">(Psst... try some of these commands!)</p>
+          </div>
+          ${QuickSuggestions.generate([
+            { command: '/help', label: '/help', description: 'See all available commands' },
+            { command: '/about', label: '/about', description: 'Learn about me' },
+            { command: '/resume', label: '/resume', description: 'View my resume' }
+          ], 'Try These Commands')}
+        `;
+        return {
+          content,
+          type: 'html'
+        };
+      }
+      
+      // Default fallback for other non-command input
       return {
         content: `Commands must start with /. Type '/help' for available commands.`,
         type: 'text'

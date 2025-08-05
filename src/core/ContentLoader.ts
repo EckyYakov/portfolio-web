@@ -1,4 +1,4 @@
-import type { Project, BlogPost, ResumeData } from '@/types';
+import type { BlogPost, ResumeData } from '@/types';
 
 export class ContentLoader {
   private static instance: ContentLoader;

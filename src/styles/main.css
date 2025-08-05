@@ -281,6 +281,17 @@ body {
   font-size: 1.125rem;
 }
 
+/* Theme Command Styles */
+.theme-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.theme-text p {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}
+
 .quick-suggestions {
   margin-top: 2rem;
 }
