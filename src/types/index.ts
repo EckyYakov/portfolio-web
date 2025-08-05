@@ -3,6 +3,24 @@ export interface Command {
   description: string;
   aliases?: string[];
   handler: CommandHandler;
+  suggestions?: CommandSuggestions;
+}
+
+export interface CommandSuggestions {
+  subcommands?: SuggestionItem[];
+  arguments?: SuggestionItem[];
+}
+
+export interface SuggestionItem {
+  name: string;
+  description: string;
+  params?: string; // e.g., "<year>" for --since-year
+}
+
+export interface AutocompleteSuggestion {
+  command: string;
+  description: string;
+  displayText: string; // e.g., "--since-year <year>"
 }
 
 export type CommandHandler = (args: string[]) => Promise<CommandResponse>;
@@ -38,16 +56,22 @@ export interface ResumeData {
   summary: string;
   contact: {
     email?: string;
+    phone?: string;
     github?: string;
     linkedin?: string;
     website?: string;
   };
   experience: ExperienceItem[];
   education: EducationItem[];
+  projects?: ProjectItem[];
   skills: {
     category: string;
     items: string[];
   }[];
+  meta?: {
+    version: string;
+    updated: string;
+  };
 }
 
 export interface ExperienceItem {
@@ -56,7 +80,18 @@ export interface ExperienceItem {
   location: string;
   startDate: string;
   endDate: string;
+  type: string;
+  technologies?: string[];
   description: string[];
+}
+
+export interface ProjectItem {
+  name: string;
+  description: string;
+  technologies: string[];
+  details: string[];
+  url?: string;
+  github?: string;
 }
 
 export interface EducationItem {

@@ -1,9 +1,11 @@
 import { CommandProcessor } from '@/core/CommandProcessor';
+import type { AutocompleteSuggestion } from '@/types';
 
 export class Autocomplete {
   private container: HTMLElement | null = null;
   private processor: CommandProcessor;
   private selectedIndex: number = -1;
+  private currentSuggestions: AutocompleteSuggestion[] = [];
 
   constructor(processor: CommandProcessor) {
     this.processor = processor;
@@ -16,30 +18,27 @@ export class Autocomplete {
   update(input: string): void {
     if (!this.container) return;
 
-    const suggestions = this.processor.getSuggestions(input);
+    this.currentSuggestions = this.processor.getSuggestions(input);
     
-    if (suggestions.length === 0) {
+    if (this.currentSuggestions.length === 0) {
       this.hide();
       return;
     }
 
-    this.render(suggestions, input);
+    this.render(this.currentSuggestions, input);
     this.show();
   }
 
-  private render(suggestions: string[], input: string): void {
+  private render(suggestions: AutocompleteSuggestion[], input: string): void {
     if (!this.container) return;
 
     this.container.innerHTML = suggestions
       .map((suggestion, index) => {
-        // Extract command name from suggestion (remove / prefix)
-        const commandName = suggestion.startsWith('/') ? suggestion.slice(1) : suggestion;
-        const command = this.processor.getCommands().find((cmd: any) => cmd.name === commandName);
         const isSelected = index === this.selectedIndex;
         return `
           <div class="autocomplete-item ${isSelected ? 'selected' : ''}" data-index="${index}">
-            <span class="suggestion-name">${this.highlightMatch(suggestion, input)}</span>
-            ${command ? `<span class="suggestion-desc">${command.description}</span>` : ''}
+            <span class="suggestion-name">${this.highlightMatch(suggestion.displayText, input)}</span>
+            <span class="suggestion-desc">${suggestion.description}</span>
           </div>
         `;
       })
@@ -66,10 +65,10 @@ export class Autocomplete {
     );
   }
 
-  private selectSuggestion(suggestion: string, executeCommand: boolean = false): void {
+  private selectSuggestion(suggestion: AutocompleteSuggestion, executeCommand: boolean = false): void {
     const input = document.querySelector('.command-input') as HTMLInputElement;
     if (input) {
-      input.value = suggestion;
+      input.value = suggestion.command;
       input.focus();
       this.hide();
       
@@ -77,7 +76,7 @@ export class Autocomplete {
         // Trigger command execution by dispatching an event
         const terminal = (window as any).terminal;
         if (terminal) {
-          terminal.executeSelectedCommand(suggestion);
+          terminal.executeSelectedCommand(suggestion.command);
         }
       }
     }
@@ -103,13 +102,9 @@ export class Autocomplete {
   selectCurrent(): void {
     if (!this.hasSelection() || !this.container) return;
     
-    const items = this.container.querySelectorAll('.autocomplete-item');
-    if (items[this.selectedIndex]) {
-      const suggestionElement = items[this.selectedIndex].querySelector('.suggestion-name');
-      if (suggestionElement) {
-        const suggestion = suggestionElement.textContent?.trim() || '';
-        this.selectSuggestion(suggestion, true); // Execute command immediately
-      }
+    if (this.selectedIndex >= 0 && this.selectedIndex < this.currentSuggestions.length) {
+      const suggestion = this.currentSuggestions[this.selectedIndex];
+      this.selectSuggestion(suggestion, true); // Execute command immediately
     }
   }
 

@@ -1,64 +1,156 @@
 {
   "name": "Evan Steitz",
-  "title": "Software Developer",
-  "summary": "Passionate full-stack developer with expertise in modern web technologies and a focus on creating innovative, user-friendly solutions.",
+  "title": "Senior Engineering Manager",
+  "summary": "Engineering leader and full-stack developer with expertise in building teams, scaling systems, and delivering 0→1 product initiatives.",
   "contact": {
-    "email": "evan@example.com",
-    "github": "evansteitz",
-    "linkedin": "evansteitz",
-    "website": "evansteitz.com"
+    "email": "ejsteitz@gmail.com",
+    "phone": "303-921-7926",
+    "github": "eckyyakov"
   },
   "experience": [
     {
-      "company": "Tech Company",
-      "position": "Senior Software Developer",
+      "company": "Demand IQ",
+      "position": "Senior Engineering Manager",
       "location": "Remote",
-      "startDate": "2022",
+      "startDate": "2022-02",
       "endDate": "Present",
+      "type": "full-time",
+      "technologies": ["React Native", "TypeScript", "Node.js", "Postgres", "AWS", "GitHub Actions"],
       "description": [
-        "Led development of microservices architecture using Node.js and TypeScript",
-        "Implemented CI/CD pipelines reducing deployment time by 60%",
-        "Mentored junior developers and conducted code reviews"
+        "Built and led a cross-functional team (3 engineers, 1 designer, 1 QA) delivering multiple 0→1 product initiatives, including a fully white-labeled no-code funnel builder and a React Native app for field sales",
+        "Led development of real-time pricing infrastructure and a custom funnel theming system powering hundreds of unique experiences",
+        "Reached $1M ARR milestone through consistent product delivery",
+        "Oversaw onboarding and support for hundreds of customers; used insights to drive engagement",
+        "Joined 50+ sales calls to address technical concerns and increase close rate",
+        "Maintained 0% attrition rate by fostering a team culture of motivation and empathy",
+        "Improved team velocity through Agile process and cross-functional coordination"
       ]
     },
     {
-      "company": "Startup Inc",
-      "position": "Full Stack Developer",
-      "location": "San Francisco, CA",
-      "startDate": "2020",
-      "endDate": "2022",
+      "company": "Tournament Kings",
+      "position": "Lead Engineer",
+      "location": "Remote",
+      "startDate": "2019-08",
+      "endDate": "2022-02",
+      "type": "full-time",
+      "technologies": ["Python", "Discord.py", "SQL", "Postgres", "Prometheus", "GitHub Actions", "AWS ECS"],
       "description": [
-        "Built responsive web applications using React and Next.js",
-        "Designed and implemented RESTful APIs with Express.js",
-        "Optimized database queries improving performance by 40%"
+        "Built and scaled a Discord bot game to 30K+ MAUs and a community reaching over 3 million users",
+        "Led a team of 5 engineers through rapid development and scaling projects",
+        "Designed backend systems and CI/CD pipelines, reducing deploy time significantly",
+        "Managed observability and system health with Prometheus and SQL",
+        "Focused on user acquisition and engineering quality, despite revenue challenges",
+        "Doubled feature delivery speed by improving roadmap and grooming processes"
+      ]
+    },
+    {
+      "company": "Comcast",
+      "position": "Full Stack Software Engineer",
+      "location": "Denver, CO",
+      "startDate": "2018-07",
+      "endDate": "2019-08",
+      "type": "full-time",
+      "technologies": ["Vue.js", "Kubernetes", "Python", "SQL", "Prometheus"],
+      "description": [
+        "Improved internal API architecture, reducing latency",
+        "Created Vue.js dashboards for monitoring deployments",
+        "Built observability tooling that improved incident response",
+        "Developed internal deployment tools to reduce error rates"
+      ]
+    },
+    {
+      "company": "Charter Communications",
+      "position": "Full Stack Software Engineer",
+      "location": "Denver, CO",
+      "startDate": "2017-04",
+      "endDate": "2018-07",
+      "type": "full-time",
+      "technologies": ["Python", "Chef", "Ansible", "Bash", "Vendor APIs"],
+      "description": [
+        "Built CLI tools to automate deployments, reducing time from 30 minutes to under 60 seconds",
+        "Led network testing automation, halving the time required",
+        "Documented infrastructure tools (Chef, Ansible) to streamline ops"
+      ]
+    },
+    {
+      "company": "Raytheon",
+      "position": "DevOps Engineer",
+      "location": "Aurora, CO",
+      "startDate": "2015-05",
+      "endDate": "2017-04",
+      "type": "full-time",
+      "technologies": ["Chef", "Rundeck", "Linux", "Bash"],
+      "description": [
+        "Developed Chef cookbooks for core systems, improving efficiency",
+        "Automated builds and deployments, freeing up sysadmin time",
+        "Built internal tools to reduce manual workloads"
+      ]
+    },
+    {
+      "company": "Independent Consultant",
+      "position": "Process, Culture & Gamification Design",
+      "location": "Remote",
+      "startDate": "2021-01",
+      "endDate": "Present",
+      "type": "consulting",
+      "technologies": ["Notion", "Miro", "Zoom", "Figma"],
+      "description": [
+        "Audited engineering teams, conducted interviews, and delivered culture/process improvement plans",
+        "Designed gamification systems to drive product engagement and retention",
+        "Collaborated with founders and leads to align technical systems with business strategy"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Tiny Teams Baseball",
+      "url": "https://www.tiny-teams.com/",
+      "description": "Multiplayer baseball sim with pixel-art graphics",
+      "technologies": ["TypeScript", "Next.js", "Supabase", "Postgres"],
+      "details": [
+        "Built a multiplayer simulation game with asynchronous replays and rich team-building mechanics",
+        "Designed simulation engine, player genetics, and gamified progression"
+      ]
+    },
+    {
+      "name": "TourneyBot",
+      "description": "Tournament automation for Discord",
+      "technologies": ["Discord.py", "Postgres", "AWS ECS"],
+      "details": [
+        "Enabled self-hosted brackets and leaderboard tools for gaming communities",
+        "Included score reporting, moderation tools, and matchmaking"
       ]
     }
   ],
   "education": [
     {
-      "institution": "University Name",
+      "institution": "Fort Hays State University",
       "degree": "Bachelor of Science",
       "field": "Computer Science",
-      "startDate": "2016",
-      "endDate": "2020"
+      "startDate": "2011",
+      "endDate": "2015"
     }
   ],
   "skills": [
     {
-      "category": "Languages",
-      "items": ["TypeScript", "JavaScript", "Python", "Go", "SQL"]
+      "category": "Languages & Frameworks",
+      "items": ["Javascript", "Typescript", "Python", "Go", "Ruby", "C#", "SQL"]
     },
     {
-      "category": "Frontend",
-      "items": ["React", "Next.js", "Vue", "HTML/CSS", "Tailwind"]
+      "category": "Infrastructure & DevOps",
+      "items": ["AWS", "Docker", "Terraform", "CloudFormation", "Supabase", "Kubernetes", "GitHub Actions", "Chef", "Ansible"]
     },
     {
-      "category": "Backend",
-      "items": ["Node.js", "Express", "PostgreSQL", "MongoDB", "Redis"]
+      "category": "Architecture & Systems",
+      "items": ["API design", "distributed systems", "data modeling", "CI/CD", "automation", "observability", "multiplayer systems"]
     },
     {
-      "category": "Tools",
-      "items": ["Git", "Docker", "AWS", "CI/CD", "Terraform"]
+      "category": "Leadership & Process",
+      "items": ["Team management", "Agile/Scrum", "hiring", "roadmap planning", "stakeholder alignment", "culture audits", "gamification design"]
     }
-  ]
+  ],
+  "meta": {
+    "version": "1.0.0",
+    "updated": "2025-08-05"
+  }
 }

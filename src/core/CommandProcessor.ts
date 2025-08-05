@@ -1,4 +1,4 @@
-import type { Command, CommandResponse } from '@/types';
+import type { Command, CommandResponse, AutocompleteSuggestion } from '@/types';
 
 export class CommandProcessor {
   private commands: Map<string, Command>;
@@ -69,30 +69,121 @@ export class CommandProcessor {
     return Array.from(uniqueCommands.values());
   }
 
-  getSuggestions(partial: string): string[] {
+  getSuggestions(partial: string): AutocompleteSuggestion[] {
     // If input is just "/", show all commands
     if (partial === '/') {
-      const suggestions: string[] = [];
+      const suggestions: AutocompleteSuggestion[] = [];
       this.commands.forEach((command, name) => {
         if (command.name === name) {
-          suggestions.push(`/${name}`);
+          suggestions.push({
+            command: `/${name}`,
+            description: command.description,
+            displayText: `/${name}`
+          });
         }
       });
-      return suggestions.sort();
+      return suggestions.sort((a, b) => a.command.localeCompare(b.command));
     }
 
-    // If input starts with "/", match against command names
+    // If input starts with "/", handle command completion and subcommand/argument suggestions
     if (partial.startsWith('/')) {
-      const commandPart = partial.slice(1).toLowerCase();
-      const suggestions: string[] = [];
+      const parts = partial.slice(1).split(' ');
+      const commandName = parts[0].toLowerCase();
+      const args = parts.slice(1);
       
-      this.commands.forEach((command, name) => {
-        if (name.startsWith(commandPart) && command.name === name) {
-          suggestions.push(`/${name}`);
+      // If we're still typing the command name (no spaces yet)
+      if (parts.length === 1) {
+        const suggestions: AutocompleteSuggestion[] = [];
+        this.commands.forEach((command, name) => {
+          if (name.startsWith(commandName) && command.name === name) {
+            // Add the base command
+            suggestions.push({
+              command: `/${name}`,
+              description: command.description,
+              displayText: `/${name}`
+            });
+            
+            // If this is an exact match and the command has suggestions, also show subcommands/arguments
+            if (name === commandName && command.suggestions) {
+              // Add subcommands
+              if (command.suggestions.subcommands) {
+                command.suggestions.subcommands.forEach(subcommand => {
+                  const fullCommand = `/${name} ${subcommand.name}`;
+                  const displayText = subcommand.params ? `${subcommand.name} ${subcommand.params}` : subcommand.name;
+                  
+                  suggestions.push({
+                    command: fullCommand,
+                    description: subcommand.description,
+                    displayText: displayText
+                  });
+                });
+              }
+              
+              // Add arguments
+              if (command.suggestions.arguments) {
+                command.suggestions.arguments.forEach(argument => {
+                  const fullCommand = `/${name} ${argument.name}`;
+                  const displayText = argument.params ? `${argument.name} ${argument.params}` : argument.name;
+                  
+                  suggestions.push({
+                    command: fullCommand,
+                    description: argument.description,
+                    displayText: displayText
+                  });
+                });
+              }
+            }
+          }
+        });
+        return suggestions.sort((a, b) => a.command.localeCompare(b.command));
+      }
+      
+      // If we have a complete command name followed by a space, show subcommands/arguments
+      const command = this.commands.get(commandName);
+      if (command && command.suggestions) {
+        const suggestions: AutocompleteSuggestion[] = [];
+        const currentArg = args[args.length - 1] || '';
+        
+        // Add subcommands if they match current input
+        if (command.suggestions.subcommands) {
+          command.suggestions.subcommands.forEach(subcommand => {
+            if (subcommand.name.toLowerCase().startsWith(currentArg.toLowerCase())) {
+              // Reconstruct the full command with the subcommand
+              const baseCommand = `/${commandName}`;
+              const existingArgs = args.slice(0, -1);
+              const fullCommand = `${baseCommand} ${existingArgs.join(' ')} ${subcommand.name}`.trim();
+              const displayText = subcommand.params ? `${subcommand.name} ${subcommand.params}` : subcommand.name;
+              
+              suggestions.push({
+                command: fullCommand,
+                description: subcommand.description,
+                displayText: displayText
+              });
+            }
+          });
         }
-      });
-
-      return suggestions.sort();
+        
+        // Add arguments if they match current input
+        if (command.suggestions.arguments) {
+          command.suggestions.arguments.forEach(argument => {
+            if (argument.name.toLowerCase().startsWith(currentArg.toLowerCase())) {
+              // Reconstruct the full command with the argument
+              const baseCommand = `/${commandName}`;
+              const existingArgs = args.slice(0, -1);
+              const fullCommand = `${baseCommand} ${existingArgs.join(' ')} ${argument.name}`.trim();
+              const displayText = argument.params ? `${argument.name} ${argument.params}` : argument.name;
+              
+              suggestions.push({
+                command: fullCommand,
+                description: argument.description,
+                displayText: displayText
+              });
+            }
+          });
+        }
+        
+        return suggestions.sort((a, b) => a.command.localeCompare(b.command));
+      }
     }
 
     // If no "/" prefix, return empty suggestions

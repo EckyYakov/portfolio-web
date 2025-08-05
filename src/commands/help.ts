@@ -1,4 +1,5 @@
 import type { Command } from '@/types';
+import { QuickSuggestions } from '@/ui/QuickSuggestions';
 
 export const helpCommand: Command = {
   name: 'help',
@@ -60,6 +61,8 @@ export const helpCommand: Command = {
           </ul>
         </div>
       </div>
+      
+      ${QuickSuggestions.generate(QuickSuggestions.HELP_RELATED, 'Quick Commands')}
     `;
 
     return {

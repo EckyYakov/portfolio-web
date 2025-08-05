@@ -1,4 +1,5 @@
 import type { Command } from '@/types';
+import { QuickSuggestions } from '@/ui/QuickSuggestions';
 
 export const aboutCommand: Command = {
   name: 'about',
@@ -13,28 +14,21 @@ export const aboutCommand: Command = {
         <h2 class="brutal-heading">About Me</h2>
         <div class="about-text">
           <p>
-            Hi! I'm Evan Steitz, a passionate software developer who loves building 
-            innovative solutions and exploring new technologies.
+            Hi! I'm Evan Steitz, a Senior Engineering Manager and full-stack developer with expertise 
+            in building teams, scaling systems, and delivering 0→1 product initiatives.
           </p>
           <p>
-            This interactive command-line portfolio showcases my work and skills in a unique way. 
+            This interactive command-line portfolio showcases my work and experience in a unique way. 
             Feel free to explore using the available commands!
           </p>
           <p>
-            I specialize in full-stack development, with a focus on creating clean, 
-            efficient, and user-friendly applications.
+            I specialize in engineering leadership, team management, and building scalable systems 
+            with modern technologies like TypeScript, React, and cloud infrastructure.
           </p>
         </div>
-        <div class="quick-links">
-          <h3>Quick Commands:</h3>
-          <div class="command-suggestions">
-            <span class="suggestion-chip" onclick="window.terminal.executeCommand('resume')">resume</span>
-            <span class="suggestion-chip" onclick="window.terminal.executeCommand('projects')">projects</span>
-            <span class="suggestion-chip" onclick="window.terminal.executeCommand('skills')">skills</span>
-            <span class="suggestion-chip" onclick="window.terminal.executeCommand('contact')">contact</span>
-          </div>
-        </div>
       </div>
+      
+      ${QuickSuggestions.generate(QuickSuggestions.MAIN_NAVIGATION, 'Quick Commands')}
     `;
 
     return {

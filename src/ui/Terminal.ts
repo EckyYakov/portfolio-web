@@ -1,14 +1,17 @@
 import { CommandProcessor } from '@/core/CommandProcessor';
 import { Router } from '@/core/Router';
 import { Autocomplete } from './Autocomplete';
+import { CommandHistory } from './CommandHistory';
 import type { CommandResponse } from '@/types';
 
 export class Terminal {
   private container: HTMLElement;
   private input!: HTMLInputElement;
+  private inputWrapper!: HTMLElement;
   private output!: HTMLElement;
   private processor: CommandProcessor;
   private autocomplete: Autocomplete;
+  private commandHistory: CommandHistory;
   private router: Router;
   private currentInput: string = '';
 
@@ -17,6 +20,7 @@ export class Terminal {
     this.processor = processor;
     this.router = Router.getInstance();
     this.autocomplete = new Autocomplete(this.processor);
+    this.commandHistory = new CommandHistory();
     
     this.setupUI();
     this.setupEventListeners();
@@ -42,6 +46,7 @@ export class Terminal {
             spellcheck="false"
           />
           <div class="autocomplete-container"></div>
+          <div class="command-history-container"></div>
         </div>
         
         <div class="content-window" id="output">
@@ -51,7 +56,9 @@ export class Terminal {
 
     this.output = this.container.querySelector('#output')!;
     this.input = this.container.querySelector('.command-input')!;
+    this.inputWrapper = this.container.querySelector('.input-wrapper')!;
     this.autocomplete.setContainer(this.container.querySelector('.autocomplete-container')!);
+    this.commandHistory.setContainer(this.container.querySelector('.command-history-container')!);
   }
 
   private setupEventListeners(): void {
@@ -100,6 +107,10 @@ export class Terminal {
 
   private handleInput(): void {
     this.currentInput = this.input.value;
+    
+    // Clear any previous command state when user starts typing
+    this.setCommandState('neutral');
+    
     if (this.currentInput) {
       this.autocomplete.update(this.currentInput);
     } else {
@@ -110,11 +121,12 @@ export class Terminal {
   private handleTabCompletion(): void {
     const suggestions = this.processor.getSuggestions(this.currentInput);
     if (suggestions.length === 1) {
-      this.input.value = suggestions[0];
+      this.input.value = suggestions[0].command;
       this.currentInput = this.input.value;
       this.autocomplete.hide();
     } else if (suggestions.length > 1) {
-      const commonPrefix = this.findCommonPrefix(suggestions);
+      const commands = suggestions.map(s => s.command);
+      const commonPrefix = this.findCommonPrefix(commands);
       if (commonPrefix.length > this.currentInput.length) {
         this.input.value = commonPrefix;
         this.currentInput = commonPrefix;
@@ -148,6 +160,23 @@ export class Terminal {
   private async executeCommand(command: string): Promise<void> {
     const response = await this.processor.execute(command);
     this.displayResponse(response);
+    
+    // Determine if command was successful based on response content
+    const isError = typeof response.content === 'string' && (
+      response.content.includes('Command not found') ||
+      response.content.includes('Error executing command') ||
+      response.content.includes('Commands must start with /')
+    );
+    
+    const state = isError ? 'error' : 'success';
+    
+    // Only show visual feedback for errors, not success
+    if (isError) {
+      this.setCommandState(state);
+    }
+    
+    // Add command to history with its state
+    this.commandHistory.addCommand(command, state);
   }
 
   private displayResponse(response: CommandResponse): void {
@@ -185,5 +214,24 @@ export class Terminal {
 
     await this.executeCommand(command);
     this.router.setCommand(command);
+  }
+
+  private setCommandState(state: 'success' | 'error' | 'neutral'): void {
+    // Clear all states first
+    this.inputWrapper.classList.remove('command-success', 'command-error');
+    
+    // Set new state
+    if (state === 'success') {
+      this.inputWrapper.classList.add('command-success');
+    } else if (state === 'error') {
+      this.inputWrapper.classList.add('command-error');
+    }
+    
+    // Auto-clear the state after a delay
+    if (state !== 'neutral') {
+      setTimeout(() => {
+        this.inputWrapper.classList.remove('command-success', 'command-error');
+      }, 2000); // Clear after 2 seconds
+    }
   }
 }

@@ -13,27 +13,6 @@ export class ContentLoader {
     return ContentLoader.instance;
   }
 
-  async getProjects(): Promise<Project[]> {
-    const cacheKey = 'projects';
-    if (this.cache.has(cacheKey)) {
-      return this.cache.get(cacheKey);
-    }
-
-    try {
-      const response = await fetch('/content/projects.json');
-      const projects = await response.json();
-      this.cache.set(cacheKey, projects);
-      return projects;
-    } catch (error) {
-      console.error('Failed to load projects:', error);
-      return [];
-    }
-  }
-
-  async getProject(id: string): Promise<Project | null> {
-    const projects = await this.getProjects();
-    return projects.find(p => p.id === id) || null;
-  }
 
   async getResume(): Promise<ResumeData | null> {
     const cacheKey = 'resume';
