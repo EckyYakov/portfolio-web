@@ -38,7 +38,7 @@ export const resumeCommand: Command = {
   },
   handler: async (args: string[]) => {
     try {
-      const response = await fetch('./content/resume.json');
+      const response = await fetch(`${import.meta.env.BASE_URL}content/resume.json`);
       const resumeData: ResumeData = await response.json();
 
       // Parse arguments
