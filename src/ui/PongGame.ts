@@ -38,7 +38,7 @@ export class PongGame {
   private keys: Set<string> = new Set();
   private mouseY: number = 0;
   private previousMouseY: number = 0;
-  private useMouseControl: boolean = true;
+  private useMouseControl: boolean = false;
   private playerVelocity: number = 0;
   
   // Gamepad support
@@ -97,6 +97,9 @@ export class PongGame {
     this.resetBall();
     
     container.appendChild(this.canvas);
+    
+    // Store reference to this instance on the canvas for cleanup
+    (this.canvas as any)._pongGameInstance = this;
     
     // Create gamepad status indicator
     this.gamepadStatusElement = document.createElement('div');
@@ -171,14 +174,12 @@ export class PongGame {
   
   private setupGamepadListeners(): void {
     const handleGamepadConnected = (e: GamepadEvent) => {
-      console.log('Gamepad connected:', e.gamepad.id);
       this.gamepadIndex = e.gamepad.index;
       this.gamepadConnected = true;
       this.updateGamepadStatus();
     };
     
     const handleGamepadDisconnected = (e: GamepadEvent) => {
-      console.log('Gamepad disconnected:', e.gamepad.id);
       if (this.gamepadIndex === e.gamepad.index) {
         this.gamepadIndex = null;
         this.gamepadConnected = false;
@@ -196,15 +197,42 @@ export class PongGame {
       handleGamepadDisconnected
     };
     
+    // Initial gamepad check
+    this.refreshGamepadConnection();
+  }
+  
+  private refreshGamepadConnection(): void {
     // Check for already connected gamepads
     const gamepads = navigator.getGamepads();
+    
+    let preferredGamepadIndex = null;
+    let fallbackGamepadIndex = null;
+    
     for (let i = 0; i < gamepads.length; i++) {
-      if (gamepads[i]) {
-        this.gamepadIndex = i;
-        this.gamepadConnected = true;
-        this.updateGamepadStatus();
-        break;
+      const gamepad = gamepads[i];
+      
+      if (gamepad && gamepad.connected) {
+        // Prefer Xbox controllers or standard gamepads over other devices
+        if (gamepad.id.toLowerCase().includes('xbox') || gamepad.id.toLowerCase().includes('xinput') || gamepad.id.toLowerCase().includes('standard')) {
+          preferredGamepadIndex = i;
+          break; // Use this one immediately
+        } else if (fallbackGamepadIndex === null) {
+          fallbackGamepadIndex = i;
+        }
       }
+    }
+    
+    const selectedIndex = preferredGamepadIndex !== null ? preferredGamepadIndex : fallbackGamepadIndex;
+    
+    if (selectedIndex !== null) {
+      this.gamepadIndex = selectedIndex;
+      this.gamepadConnected = true;
+      this.updateGamepadStatus();
+    } else {
+      // No gamepads found
+      this.gamepadIndex = null;
+      this.gamepadConnected = false;
+      this.updateGamepadStatus();
     }
   }
   
@@ -222,6 +250,8 @@ export class PongGame {
   private startGame(): void {
     this.gameState = 'playing';
     this.resetBall();
+    // Refresh gamepad connection each time the game starts
+    this.refreshGamepadConnection();
   }
   
   private resetGame(): void {
@@ -308,7 +338,8 @@ export class PongGame {
       
       if (gamepad) {
         // Left analog stick vertical axis (axis 1) or D-pad
-        const leftStickY = gamepad.axes[1] || 0;
+        const leftStickX = gamepad.axes[0] || 0; // X-axis (left/right)
+        const leftStickY = gamepad.axes[1] || 0; // Y-axis (up/down)
         const dpadUp = gamepad.buttons[12]?.pressed || false;
         const dpadDown = gamepad.buttons[13]?.pressed || false;
         
@@ -328,6 +359,16 @@ export class PongGame {
           gamepadMovement = this.playerPaddle.speed;
           this.useGamepadControl = true;
           this.useMouseControl = false;
+        }
+        
+        // Reset control modes if no gamepad input but gamepad is connected
+        // This allows other input methods to take over when gamepad is idle
+        if (Math.abs(leftStickY) <= this.GAMEPAD_DEADZONE && !dpadUp && !dpadDown) {
+          // Only reset if we were previously using gamepad control
+          if (this.useGamepadControl) {
+            this.useGamepadControl = false;
+            // Don't automatically set mouse control - let mouse movement set it
+          }
         }
       }
     }

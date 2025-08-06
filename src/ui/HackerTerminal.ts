@@ -73,6 +73,7 @@ export class HackerTerminal {
   constructor(container: HTMLElement) {
     this.container = container;
     this.setupUI();
+    this.outputElement = this.container.querySelector('#hacker-output') as HTMLElement;
     this.start();
   }
 

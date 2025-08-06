@@ -14,6 +14,7 @@ export class Terminal {
   private commandHistory: CommandHistory;
   private router: Router;
   private currentInput: string = '';
+  private currentGameInstance: any = null;
 
   constructor(container: HTMLElement, processor: CommandProcessor) {
     this.container = container;
@@ -180,16 +181,51 @@ export class Terminal {
   }
 
   private displayResponse(response: CommandResponse): void {
+    // Cleanup any existing game instances before clearing content
+    this.cleanupCurrentGame();
+    
     // Clear previous content
     this.output.innerHTML = '';
     
     if (response.type === 'html' && response.content instanceof HTMLElement) {
       this.output.appendChild(response.content);
+      
+      // Check if this is a Pong game and store reference for cleanup
+      const pongContainer = response.content.querySelector('.pong-game-container');
+      if (pongContainer) {
+        // The PongGame instance will be created in a setTimeout, so we need to wait
+        setTimeout(() => {
+          // Look for the PongGame instance in the game wrapper
+          const gameWrapper = pongContainer.querySelector('.pong-game-wrapper');
+          if (gameWrapper) {
+            // Store reference to the wrapper so we can find the game instance later
+            this.currentGameInstance = { type: 'pong', wrapper: gameWrapper };
+          }
+        }, 150); // Wait slightly longer than the game's 100ms setTimeout
+      }
     } else if (response.content.toString().trim()) {
       const contentDiv = document.createElement('div');
       contentDiv.className = 'command-response';
       contentDiv.textContent = response.content.toString();
       this.output.appendChild(contentDiv);
+    }
+  }
+  
+  private cleanupCurrentGame(): void {
+    if (this.currentGameInstance) {
+      if (this.currentGameInstance.type === 'pong') {
+        // Find PongGame instances by looking for canvas elements and their cleanup methods
+        const canvases = document.querySelectorAll('canvas.pong-canvas');
+        canvases.forEach(canvas => {
+          // Look for the cleanup method stored on the canvas or parent
+          const gameInstance = (canvas as any)._pongGameInstance;
+          if (gameInstance && typeof gameInstance.cleanup === 'function') {
+            gameInstance.cleanup();
+          }
+        });
+      }
+      
+      this.currentGameInstance = null;
     }
   }
 
