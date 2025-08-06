@@ -1,5 +1,6 @@
 import type { Command, CommandResponse, AutocompleteSuggestion } from '@/types';
 import { QuickSuggestions } from '@/ui/QuickSuggestions';
+import { PongGame } from '@/ui/PongGame';
 
 export class CommandProcessor {
   private commands: Map<string, Command>;
@@ -54,7 +55,7 @@ export class CommandProcessor {
         content.innerHTML = `
           <div class="easter-egg-response">
             <p><strong>pong 🏓</strong></p>
-            <p style="font-style: italic;">(Psst... try some of these commands!)</p>
+            <p style="font-style: italic;">Want to play the real game? Try typing <strong>"lets play"</strong>!</p>
           </div>
           ${QuickSuggestions.generate([
             { command: '/help', label: '/help', description: 'See all available commands' },
@@ -62,6 +63,37 @@ export class CommandProcessor {
             { command: '/resume', label: '/resume', description: 'View my resume' }
           ], 'Try These Commands')}
         `;
+        return {
+          content,
+          type: 'html'
+        };
+      }
+      
+      if (lowerInput === 'lets play') {
+        const content = document.createElement('div');
+        content.className = 'pong-game-container';
+        
+        // Add game header
+        const header = document.createElement('div');
+        header.className = 'pong-header brutal-box';
+        header.innerHTML = `
+          <h2 class="brutal-heading">Pong Game 🏓</h2>
+          <p>Classic Pong! First to 5 points wins. Use mouse or W/S/↑/↓ keys to control your paddle.</p>
+          <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+        `;
+        
+        content.appendChild(header);
+        
+        // Create game wrapper and initialize game
+        const gameWrapper = document.createElement('div');
+        gameWrapper.className = 'pong-game-wrapper';
+        content.appendChild(gameWrapper);
+        
+        // Initialize the game
+        setTimeout(() => {
+          new PongGame(gameWrapper);
+        }, 100);
+        
         return {
           content,
           type: 'html'
