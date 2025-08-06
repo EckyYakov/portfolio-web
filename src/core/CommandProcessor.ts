@@ -1,6 +1,7 @@
 import type { Command, CommandResponse, AutocompleteSuggestion } from '@/types';
 import { QuickSuggestions } from '@/ui/QuickSuggestions';
 import { PongGame } from '@/ui/PongGame';
+import { HackerTerminal } from '@/ui/HackerTerminal';
 
 export class CommandProcessor {
   private commands: Map<string, Command>;
@@ -92,6 +93,23 @@ export class CommandProcessor {
         // Initialize the game
         setTimeout(() => {
           new PongGame(gameWrapper);
+        }, 100);
+        
+        return {
+          content,
+          type: 'html'
+        };
+      }
+      
+      // Hacker terminal easter egg
+      if (lowerInput === 'hack' || lowerInput === 'hacker' || lowerInput === 'hackerman' || 
+          lowerInput === 'matrix' || lowerInput === 'sudo' || lowerInput === 'root') {
+        const content = document.createElement('div');
+        content.className = 'hacker-terminal-container';
+        
+        // Initialize the hacker terminal
+        setTimeout(() => {
+          new HackerTerminal(content);
         }, 100);
         
         return {
