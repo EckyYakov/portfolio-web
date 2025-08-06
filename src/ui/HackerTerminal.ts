@@ -1,4 +1,5 @@
 import { EasterEggKeywords } from './EasterEggKeywords';
+import { DeviceDetector } from '@/utils/device';
 
 export class HackerTerminal {
   private container: HTMLElement;
@@ -97,6 +98,16 @@ export class HackerTerminal {
   }
 
   private setupUI(): void {
+    const isMobile = DeviceDetector.isMobile();
+    const footerContent = isMobile ? 
+      `<div class="hacker-footer-text">
+        <div class="blink">▮</div>
+        <span>Press ESC or tap STOP to terminate</span>
+       </div>
+       <button class="hacker-stop-button" id="hacker-stop-btn">TERMINATE</button>` :
+      `<div class="blink">▮</div>
+       <span>Press ESC or type any command to exit</span>`;
+
     this.container.innerHTML = `
       <div class="hacker-terminal">
         <div class="hacker-header">
@@ -109,13 +120,25 @@ export class HackerTerminal {
         </div>
         <div class="hacker-output" id="hacker-output"></div>
         <div class="hacker-footer">
-          <div class="blink">▮</div>
-          <span>Press ESC or type any command to exit</span>
+          ${footerContent}
         </div>
       </div>
     `;
     
     this.outputElement = this.container.querySelector('#hacker-output')!;
+    
+    // Add click handler for mobile stop button
+    if (isMobile) {
+      const stopButton = this.container.querySelector('#hacker-stop-btn');
+      if (stopButton) {
+        stopButton.addEventListener('click', () => {
+          this.showExitMessage();
+          setTimeout(() => {
+            this.stop();
+          }, 2000);
+        });
+      }
+    }
   }
 
   private start(): void {
