@@ -41,6 +41,12 @@ export class PongGame {
   private useMouseControl: boolean = true;
   private playerVelocity: number = 0;
   
+  // Gamepad support
+  private gamepadIndex: number | null = null;
+  private gamepadConnected: boolean = false;
+  private useGamepadControl: boolean = false;
+  private readonly GAMEPAD_DEADZONE = 0.15;
+  
   // Game settings
   private readonly CANVAS_WIDTH = 600;
   private readonly CANVAS_HEIGHT = 300;
@@ -48,6 +54,7 @@ export class PongGame {
   private readonly PADDLE_HEIGHT = 60;
   private readonly BALL_RADIUS = 6;
   private readonly WINNING_SCORE = 5;
+  private gamepadStatusElement: HTMLDivElement | null = null;
   
   constructor(container: HTMLElement) {
     // Create canvas
@@ -90,7 +97,15 @@ export class PongGame {
     this.resetBall();
     
     container.appendChild(this.canvas);
+    
+    // Create gamepad status indicator
+    this.gamepadStatusElement = document.createElement('div');
+    this.gamepadStatusElement.className = 'gamepad-status';
+    this.gamepadStatusElement.style.cssText = 'position: absolute; top: 10px; right: 10px; font-family: monospace; font-size: 12px; opacity: 0.7;';
+    container.appendChild(this.gamepadStatusElement);
+    
     this.setupEventListeners();
+    this.setupGamepadListeners();
     this.gameLoop = requestAnimationFrame(() => this.loop());
   }
   
@@ -129,6 +144,7 @@ export class PongGame {
       }
       this.mouseY = e.clientY - rect.top;
       this.useMouseControl = true;
+      this.useGamepadControl = false; // Switch from gamepad when mouse moves
     };
     
     const handleClick = () => {
@@ -153,6 +169,56 @@ export class PongGame {
     };
   }
   
+  private setupGamepadListeners(): void {
+    const handleGamepadConnected = (e: GamepadEvent) => {
+      console.log('Gamepad connected:', e.gamepad.id);
+      this.gamepadIndex = e.gamepad.index;
+      this.gamepadConnected = true;
+      this.updateGamepadStatus();
+    };
+    
+    const handleGamepadDisconnected = (e: GamepadEvent) => {
+      console.log('Gamepad disconnected:', e.gamepad.id);
+      if (this.gamepadIndex === e.gamepad.index) {
+        this.gamepadIndex = null;
+        this.gamepadConnected = false;
+        this.useGamepadControl = false;
+        this.updateGamepadStatus();
+      }
+    };
+    
+    window.addEventListener('gamepadconnected', handleGamepadConnected);
+    window.addEventListener('gamepaddisconnected', handleGamepadDisconnected);
+    
+    // Store references for cleanup
+    (this.canvas as any)._gamepadListeners = {
+      handleGamepadConnected,
+      handleGamepadDisconnected
+    };
+    
+    // Check for already connected gamepads
+    const gamepads = navigator.getGamepads();
+    for (let i = 0; i < gamepads.length; i++) {
+      if (gamepads[i]) {
+        this.gamepadIndex = i;
+        this.gamepadConnected = true;
+        this.updateGamepadStatus();
+        break;
+      }
+    }
+  }
+  
+  private updateGamepadStatus(): void {
+    if (this.gamepadStatusElement) {
+      if (this.gamepadConnected) {
+        this.gamepadStatusElement.textContent = '🎮 Controller Connected';
+        this.gamepadStatusElement.style.color = 'var(--color-accent)';
+      } else {
+        this.gamepadStatusElement.textContent = '';
+      }
+    }
+  }
+  
   private startGame(): void {
     this.gameState = 'playing';
     this.resetBall();
@@ -171,6 +237,9 @@ export class PongGame {
   }
   
   private update(): void {
+    // Poll gamepad for menu/pause controls even when not playing
+    this.pollGamepad();
+    
     if (this.gameState !== 'playing') return;
     
     // Update player paddle
@@ -186,10 +255,88 @@ export class PongGame {
     this.checkScoring();
   }
   
-  private updatePlayerPaddle(): void {
-    const previousY = this.playerPaddle.y;
+  private pollGamepad(): void {
+    if (this.gamepadIndex === null) return;
     
-    if (this.useMouseControl) {
+    const gamepads = navigator.getGamepads();
+    const gamepad = gamepads[this.gamepadIndex];
+    
+    if (!gamepad) {
+      this.gamepadConnected = false;
+      this.gamepadIndex = null;
+      this.updateGamepadStatus();
+      return;
+    }
+    
+    // Button mappings (standard gamepad)
+    // Button 0: A/Cross - Start game
+    // Button 1: B/Circle - Pause (alternative)
+    // Button 9: Start/Options - Pause
+    
+    // Handle menu/game over states
+    if (this.gameState === 'menu' || this.gameState === 'gameover') {
+      if (gamepad.buttons[0]?.pressed) {
+        if (this.gameState === 'menu') {
+          this.startGame();
+        } else {
+          this.resetGame();
+        }
+      }
+    }
+    
+    // Handle pause (Start button or B button)
+    if (gamepad.buttons[9]?.pressed || gamepad.buttons[1]?.pressed) {
+      // Use a simple debounce to prevent rapid toggling
+      if (!(this as any)._gamepadPausePressed) {
+        if (this.gameState === 'playing' || this.gameState === 'paused') {
+          this.gameState = this.gameState === 'paused' ? 'playing' : 'paused';
+        }
+        (this as any)._gamepadPausePressed = true;
+      }
+    } else {
+      (this as any)._gamepadPausePressed = false;
+    }
+  }
+  
+  private updatePlayerPaddle(): void {
+    
+    // Check for gamepad input
+    let gamepadMovement = 0;
+    if (this.gamepadIndex !== null) {
+      const gamepads = navigator.getGamepads();
+      const gamepad = gamepads[this.gamepadIndex];
+      
+      if (gamepad) {
+        // Left analog stick vertical axis (axis 1) or D-pad
+        const leftStickY = gamepad.axes[1] || 0;
+        const dpadUp = gamepad.buttons[12]?.pressed || false;
+        const dpadDown = gamepad.buttons[13]?.pressed || false;
+        
+        // Apply deadzone to analog stick
+        if (Math.abs(leftStickY) > this.GAMEPAD_DEADZONE) {
+          gamepadMovement = leftStickY * this.playerPaddle.speed * 1.5; // Slightly faster for analog
+          this.useGamepadControl = true;
+          this.useMouseControl = false;
+        }
+        
+        // D-pad overrides analog stick
+        if (dpadUp) {
+          gamepadMovement = -this.playerPaddle.speed;
+          this.useGamepadControl = true;
+          this.useMouseControl = false;
+        } else if (dpadDown) {
+          gamepadMovement = this.playerPaddle.speed;
+          this.useGamepadControl = true;
+          this.useMouseControl = false;
+        }
+      }
+    }
+    
+    if (this.useGamepadControl && gamepadMovement !== 0) {
+      // Gamepad control
+      this.playerPaddle.y += gamepadMovement;
+      this.playerVelocity = gamepadMovement;
+    } else if (this.useMouseControl) {
       // Mouse control
       this.playerPaddle.y = this.mouseY - this.PADDLE_HEIGHT / 2;
       // Calculate velocity from mouse movement
@@ -208,9 +355,10 @@ export class PongGame {
       }
     }
     
-    // Use keyboard if keys are pressed
+    // Use keyboard if keys are pressed (overrides gamepad)
     if (this.keys.has('w') || this.keys.has('s') || this.keys.has('arrowup') || this.keys.has('arrowdown')) {
       this.useMouseControl = false;
+      this.useGamepadControl = false;
     }
     
     // Keep paddle in bounds
@@ -390,7 +538,10 @@ export class PongGame {
       this.ctx.font = '16px monospace';
       this.ctx.fillText('Click or press SPACE to start', this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 20);
       this.ctx.font = '14px monospace';
-      this.ctx.fillText('Controls: Mouse or W/S/↑/↓', this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 45);
+      const controlsText = this.gamepadConnected 
+        ? 'Controls: 🎮 Gamepad, Mouse or W/S/↑/↓' 
+        : 'Controls: Mouse or W/S/↑/↓';
+      this.ctx.fillText(controlsText, this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 45);
       this.ctx.fillText(`First to ${this.WINNING_SCORE} wins!`, this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 65);
     } else if (this.gameState === 'gameover') {
       // Draw game over
@@ -423,6 +574,18 @@ export class PongGame {
       document.removeEventListener('keyup', listeners.handleKeyUp);
       this.canvas.removeEventListener('mousemove', listeners.handleMouseMove);
       this.canvas.removeEventListener('click', listeners.handleClick);
+    }
+    
+    // Remove gamepad event listeners
+    const gamepadListeners = (this.canvas as any)._gamepadListeners;
+    if (gamepadListeners) {
+      window.removeEventListener('gamepadconnected', gamepadListeners.handleGamepadConnected);
+      window.removeEventListener('gamepaddisconnected', gamepadListeners.handleGamepadDisconnected);
+    }
+    
+    // Remove gamepad status element
+    if (this.gamepadStatusElement && this.gamepadStatusElement.parentNode) {
+      this.gamepadStatusElement.parentNode.removeChild(this.gamepadStatusElement);
     }
     
     // Remove canvas from DOM
