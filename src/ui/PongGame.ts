@@ -44,27 +44,38 @@ export class PongGame {
   private useMouseControl: boolean = false;
   private playerVelocity: number = 0;
   
+  // Touch controls
+  private touchY: number = 0;
+  private previousTouchY: number = 0;
+  private useTouchControl: boolean = false;
+  private touchActive: boolean = false;
+  
   // Gamepad support
   private gamepadIndex: number | null = null;
   private gamepadConnected: boolean = false;
   private useGamepadControl: boolean = false;
   private readonly GAMEPAD_DEADZONE = 0.15;
   
-  // Game settings
-  private readonly CANVAS_WIDTH = 600;
-  private readonly CANVAS_HEIGHT = 300;
-  private readonly PADDLE_WIDTH = 12;
-  private readonly PADDLE_HEIGHT = 60;
-  private readonly BALL_RADIUS = 6;
+  // Game settings (will be calculated based on screen size)
+  private canvasWidth!: number;
+  private canvasHeight!: number;
+  private paddleWidth!: number;
+  private paddleHeight!: number;
+  private ballRadius!: number;
   private readonly WINNING_SCORE = 5;
+  private scaleFactor!: number;
   private gamepadStatusElement: HTMLDivElement | null = null;
   
   constructor(container: HTMLElement) {
     this.container = container;
+    
+    // Calculate responsive canvas dimensions
+    this.calculateCanvasDimensions();
+    
     // Create canvas
     this.canvas = document.createElement('canvas');
-    this.canvas.width = this.CANVAS_WIDTH;
-    this.canvas.height = this.CANVAS_HEIGHT;
+    this.canvas.width = this.canvasWidth;
+    this.canvas.height = this.canvasHeight;
     this.canvas.className = 'pong-canvas';
     
     const ctx = this.canvas.getContext('2d');
@@ -73,29 +84,29 @@ export class PongGame {
     
     // Initialize game objects
     this.playerPaddle = {
-      x: 20,
-      y: this.CANVAS_HEIGHT / 2 - this.PADDLE_HEIGHT / 2,
-      width: this.PADDLE_WIDTH,
-      height: this.PADDLE_HEIGHT,
-      speed: 5
+      x: 20 * this.scaleFactor,
+      y: this.canvasHeight / 2 - this.paddleHeight / 2,
+      width: this.paddleWidth,
+      height: this.paddleHeight,
+      speed: 5 * this.scaleFactor
     };
     
     this.aiPaddle = {
-      x: this.CANVAS_WIDTH - 20 - this.PADDLE_WIDTH,
-      y: this.CANVAS_HEIGHT / 2 - this.PADDLE_HEIGHT / 2,
-      width: this.PADDLE_WIDTH,
-      height: this.PADDLE_HEIGHT,
-      speed: 3
+      x: this.canvasWidth - (20 * this.scaleFactor) - this.paddleWidth,
+      y: this.canvasHeight / 2 - this.paddleHeight / 2,
+      width: this.paddleWidth,
+      height: this.paddleHeight,
+      speed: 3 * this.scaleFactor
     };
     
     // Initialize ball
     this.ball = {
-      x: this.CANVAS_WIDTH / 2,
-      y: this.CANVAS_HEIGHT / 2,
-      radius: this.BALL_RADIUS,
+      x: this.canvasWidth / 2,
+      y: this.canvasHeight / 2,
+      radius: this.ballRadius,
       vx: 0,
       vy: 0,
-      speed: 4
+      speed: 4 * this.scaleFactor
     };
     
     this.resetBall();
@@ -112,18 +123,45 @@ export class PongGame {
     container.appendChild(this.gamepadStatusElement);
     
     this.setupEventListeners();
+    this.setupTouchListeners();
     this.setupGamepadListeners();
     this.gameLoop = requestAnimationFrame(() => this.loop());
   }
   
+  private calculateCanvasDimensions(): void {
+    // Calculate responsive canvas size based on viewport and container constraints
+    const viewportWidth = window.innerWidth;
+    const isMobile = viewportWidth <= 768;
+    
+    let maxWidth: number;
+    if (isMobile) {
+      // Mobile: Use most of viewport width but leave some margin for visual breathing room
+      maxWidth = Math.min(viewportWidth * 0.95, 800);
+    } else {
+      // Desktop: Match terminal input width (800px - 3rem padding = ~752px)
+      maxWidth = Math.min(704, viewportWidth * 0.9);
+    }
+    
+    this.canvasWidth = maxWidth;
+    this.canvasHeight = this.canvasWidth / 2; // Maintain 2:1 aspect ratio
+    
+    // Calculate scale factor based on original dimensions
+    this.scaleFactor = this.canvasWidth / 600;
+    
+    // Scale game elements
+    this.paddleWidth = Math.round(12 * this.scaleFactor);
+    this.paddleHeight = Math.round(60 * this.scaleFactor);
+    this.ballRadius = Math.round(6 * this.scaleFactor);
+  }
+  
   private resetBall(): void {
     this.ball = {
-      x: this.CANVAS_WIDTH / 2,
-      y: this.CANVAS_HEIGHT / 2,
-      radius: this.BALL_RADIUS,
-      vx: (Math.random() > 0.5 ? 1 : -1) * 4,
-      vy: (Math.random() - 0.5) * 4,
-      speed: 4
+      x: this.canvasWidth / 2,
+      y: this.canvasHeight / 2,
+      radius: this.ballRadius,
+      vx: (Math.random() > 0.5 ? 1 : -1) * 4 * this.scaleFactor,
+      vy: (Math.random() - 0.5) * 4 * this.scaleFactor,
+      speed: 4 * this.scaleFactor
     };
   }
   
@@ -152,6 +190,7 @@ export class PongGame {
       this.mouseY = e.clientY - rect.top;
       this.useMouseControl = true;
       this.useGamepadControl = false; // Switch from gamepad when mouse moves
+      this.useTouchControl = false; // Switch from touch when mouse moves
     };
     
     const handleClick = () => {
@@ -173,6 +212,54 @@ export class PongGame {
       handleKeyUp,
       handleMouseMove,
       handleClick
+    };
+  }
+  
+  private setupTouchListeners(): void {
+    const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length > 0) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.touchY = e.touches[0].clientY - rect.top;
+        this.previousTouchY = this.touchY;
+        this.touchActive = true;
+        this.useTouchControl = true;
+        this.useMouseControl = false;
+        this.useGamepadControl = false;
+        
+        // Handle game state changes on touch
+        if (this.gameState === 'menu') {
+          this.startGame();
+        } else if (this.gameState === 'gameover') {
+          this.resetGame();
+        }
+      }
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (this.touchActive && e.touches.length > 0) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.previousTouchY = this.touchY;
+        this.touchY = e.touches[0].clientY - rect.top;
+      }
+    };
+    
+    const handleTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      this.touchActive = false;
+    };
+    
+    // Add touch event listeners
+    this.canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    this.canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    this.canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+    
+    // Store references for cleanup
+    (this.canvas as any)._touchListeners = {
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd
     };
   }
   
@@ -380,9 +467,15 @@ export class PongGame {
       // Gamepad control
       this.playerPaddle.y += gamepadMovement;
       this.playerVelocity = gamepadMovement;
+    } else if (this.useTouchControl && this.touchActive) {
+      // Touch control
+      this.playerPaddle.y = this.touchY - this.paddleHeight / 2;
+      // Calculate velocity from touch movement
+      this.playerVelocity = this.touchY - this.previousTouchY;
+      this.previousTouchY = this.touchY;
     } else if (this.useMouseControl) {
       // Mouse control
-      this.playerPaddle.y = this.mouseY - this.PADDLE_HEIGHT / 2;
+      this.playerPaddle.y = this.mouseY - this.paddleHeight / 2;
       // Calculate velocity from mouse movement
       this.playerVelocity = this.mouseY - this.previousMouseY;
       this.previousMouseY = this.mouseY;
@@ -399,33 +492,34 @@ export class PongGame {
       }
     }
     
-    // Use keyboard if keys are pressed (overrides gamepad)
+    // Use keyboard if keys are pressed (overrides other controls)
     if (this.keys.has('w') || this.keys.has('s') || this.keys.has('arrowup') || this.keys.has('arrowdown')) {
       this.useMouseControl = false;
       this.useGamepadControl = false;
+      this.useTouchControl = false;
     }
     
     // Keep paddle in bounds
-    this.playerPaddle.y = Math.max(0, Math.min(this.CANVAS_HEIGHT - this.PADDLE_HEIGHT, this.playerPaddle.y));
+    this.playerPaddle.y = Math.max(0, Math.min(this.canvasHeight - this.paddleHeight, this.playerPaddle.y));
     
     // Clamp velocity if paddle hit bounds
-    if (this.playerPaddle.y === 0 || this.playerPaddle.y === this.CANVAS_HEIGHT - this.PADDLE_HEIGHT) {
+    if (this.playerPaddle.y === 0 || this.playerPaddle.y === this.canvasHeight - this.paddleHeight) {
       this.playerVelocity = 0;
     }
   }
   
   private updateAIPaddle(): void {
     // AI with intentional imperfection for fun gameplay
-    const paddleCenter = this.aiPaddle.y + this.PADDLE_HEIGHT / 2;
+    const paddleCenter = this.aiPaddle.y + this.paddleHeight / 2;
     
     // Only track ball when it's moving towards AI and past the middle
-    if (this.ball.vx > 0 && this.ball.x > this.CANVAS_WIDTH * 0.4) {
+    if (this.ball.vx > 0 && this.ball.x > this.canvasWidth * 0.4) {
       // Add some reaction delay and error
-      const targetY = this.ball.y + (Math.random() - 0.5) * 30; // Add random offset
+      const targetY = this.ball.y + (Math.random() - 0.5) * 30 * this.scaleFactor; // Scale random offset
       const diff = targetY - paddleCenter;
       
       // Don't move if difference is small (creates dead zone)
-      if (Math.abs(diff) > 15) {
+      if (Math.abs(diff) > 15 * this.scaleFactor) {
         // Slower reaction speed and sometimes "miss" on purpose
         const speedMultiplier = Math.random() > 0.1 ? 1 : 0.5; // 10% chance to be slow
         if (diff > 0) {
@@ -436,15 +530,15 @@ export class PongGame {
       }
     } else {
       // Return to center when ball is going away
-      const centerY = this.CANVAS_HEIGHT / 2 - this.PADDLE_HEIGHT / 2;
+      const centerY = this.canvasHeight / 2 - this.paddleHeight / 2;
       const diff = centerY - this.aiPaddle.y;
-      if (Math.abs(diff) > 5) {
+      if (Math.abs(diff) > 5 * this.scaleFactor) {
         this.aiPaddle.y += diff * 0.05; // Slowly drift to center
       }
     }
     
     // Keep AI paddle in bounds
-    this.aiPaddle.y = Math.max(0, Math.min(this.CANVAS_HEIGHT - this.PADDLE_HEIGHT, this.aiPaddle.y));
+    this.aiPaddle.y = Math.max(0, Math.min(this.canvasHeight - this.paddleHeight, this.aiPaddle.y));
   }
   
   private updateBall(): void {
@@ -452,7 +546,7 @@ export class PongGame {
     this.ball.y += this.ball.vy;
     
     // Top and bottom wall bouncing
-    if (this.ball.y <= this.BALL_RADIUS || this.ball.y >= this.CANVAS_HEIGHT - this.BALL_RADIUS) {
+    if (this.ball.y <= this.ballRadius || this.ball.y >= this.canvasHeight - this.ballRadius) {
       this.ball.vy = -this.ball.vy;
     }
     
@@ -462,10 +556,10 @@ export class PongGame {
   }
   
   private checkPaddleCollision(paddle: Paddle): void {
-    if (this.ball.x - this.BALL_RADIUS < paddle.x + paddle.width &&
-        this.ball.x + this.BALL_RADIUS > paddle.x &&
-        this.ball.y - this.BALL_RADIUS < paddle.y + paddle.height &&
-        this.ball.y + this.BALL_RADIUS > paddle.y) {
+    if (this.ball.x - this.ballRadius < paddle.x + paddle.width &&
+        this.ball.x + this.ballRadius > paddle.x &&
+        this.ball.y - this.ballRadius < paddle.y + paddle.height &&
+        this.ball.y + this.ballRadius > paddle.y) {
       
       // Reverse ball direction
       this.ball.vx = -this.ball.vx;
@@ -475,10 +569,10 @@ export class PongGame {
       const hitPos = (this.ball.y - paddleCenter) / (paddle.height / 2);
       
       // Base angle from hit position
-      let newVy = hitPos * 4;
+      let newVy = hitPos * 4 * this.scaleFactor;
       
       // Add paddle velocity influence (only for player paddle)
-      if (paddle === this.playerPaddle && Math.abs(this.playerVelocity) > 0.5) {
+      if (paddle === this.playerPaddle && Math.abs(this.playerVelocity) > 0.5 * this.scaleFactor) {
         // Moving paddle adds extra spin to the ball
         newVy += this.playerVelocity * 0.3;
         
@@ -493,15 +587,15 @@ export class PongGame {
       this.ball.vy = newVy;
       
       // Cap maximum velocities to keep game playable
-      const maxSpeed = 8;
+      const maxSpeed = 8 * this.scaleFactor;
       this.ball.vy = Math.max(-maxSpeed, Math.min(maxSpeed, this.ball.vy));
       this.ball.vx = Math.max(-maxSpeed * 1.5, Math.min(maxSpeed * 1.5, Math.abs(this.ball.vx))) * Math.sign(this.ball.vx);
       
       // Prevent ball from getting stuck in paddle
       if (paddle === this.playerPaddle) {
-        this.ball.x = paddle.x + paddle.width + this.BALL_RADIUS;
+        this.ball.x = paddle.x + paddle.width + this.ballRadius;
       } else {
-        this.ball.x = paddle.x - this.BALL_RADIUS;
+        this.ball.x = paddle.x - this.ballRadius;
       }
     }
   }
@@ -515,7 +609,7 @@ export class PongGame {
         this.gameState = 'gameover';
         this.showPostGameMessage();
       }
-    } else if (this.ball.x > this.CANVAS_WIDTH) {
+    } else if (this.ball.x > this.canvasWidth) {
       // Player scores
       this.score.player++;
       this.resetBall();
@@ -565,15 +659,15 @@ export class PongGame {
     
     // Clear canvas
     this.ctx.fillStyle = backgroundColor;
-    this.ctx.fillRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
+    this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     
     // Draw center line
     this.ctx.strokeStyle = foregroundColor;
-    this.ctx.lineWidth = 2;
-    this.ctx.setLineDash([5, 5]);
+    this.ctx.lineWidth = 2 * this.scaleFactor;
+    this.ctx.setLineDash([5 * this.scaleFactor, 5 * this.scaleFactor]);
     this.ctx.beginPath();
-    this.ctx.moveTo(this.CANVAS_WIDTH / 2, 0);
-    this.ctx.lineTo(this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT);
+    this.ctx.moveTo(this.canvasWidth / 2, 0);
+    this.ctx.lineTo(this.canvasWidth / 2, this.canvasHeight);
     this.ctx.stroke();
     this.ctx.setLineDash([]);
     
@@ -586,54 +680,60 @@ export class PongGame {
       // Draw ball
       this.ctx.fillStyle = accentColor;
       this.ctx.beginPath();
-      this.ctx.arc(this.ball.x, this.ball.y, this.BALL_RADIUS, 0, Math.PI * 2);
+      this.ctx.arc(this.ball.x, this.ball.y, this.ballRadius, 0, Math.PI * 2);
       this.ctx.fill();
       
       // Draw score
       this.ctx.fillStyle = foregroundColor;
-      this.ctx.font = '24px monospace';
+      this.ctx.font = `${24 * this.scaleFactor}px monospace`;
       this.ctx.textAlign = 'center';
-      this.ctx.fillText(`${this.score.player}`, this.CANVAS_WIDTH / 4, 40);
-      this.ctx.fillText(`${this.score.ai}`, (3 * this.CANVAS_WIDTH) / 4, 40);
+      this.ctx.fillText(`${this.score.player}`, this.canvasWidth / 4, 40 * this.scaleFactor);
+      this.ctx.fillText(`${this.score.ai}`, (3 * this.canvasWidth) / 4, 40 * this.scaleFactor);
       
       if (this.gameState === 'paused') {
         this.ctx.fillStyle = accentColor;
-        this.ctx.font = '20px monospace';
-        this.ctx.fillText('PAUSED', this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2);
-        this.ctx.font = '14px monospace';
-        this.ctx.fillText('Press ESC to resume', this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 30);
+        this.ctx.font = `${20 * this.scaleFactor}px monospace`;
+        this.ctx.fillText('PAUSED', this.canvasWidth / 2, this.canvasHeight / 2);
+        this.ctx.font = `${14 * this.scaleFactor}px monospace`;
+        this.ctx.fillText('Press ESC to resume', this.canvasWidth / 2, this.canvasHeight / 2 + 30 * this.scaleFactor);
       }
     } else if (this.gameState === 'menu') {
       // Draw menu
       this.ctx.fillStyle = accentColor;
-      this.ctx.font = '32px monospace';
+      this.ctx.font = `${32 * this.scaleFactor}px monospace`;
       this.ctx.textAlign = 'center';
-      this.ctx.fillText('PONG', this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 - 40);
+      this.ctx.fillText('PONG', this.canvasWidth / 2, this.canvasHeight / 2 - 40 * this.scaleFactor);
       
       this.ctx.fillStyle = foregroundColor;
-      this.ctx.font = '16px monospace';
-      this.ctx.fillText('Click or press SPACE to start', this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 20);
-      this.ctx.font = '14px monospace';
-      const controlsText = this.gamepadConnected 
-        ? 'Controls: 🎮 Gamepad, Mouse or W/S/↑/↓' 
-        : 'Controls: Mouse or W/S/↑/↓';
-      this.ctx.fillText(controlsText, this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 45);
-      this.ctx.fillText(`First to ${this.WINNING_SCORE} wins!`, this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 65);
+      this.ctx.font = `${16 * this.scaleFactor}px monospace`;
+      const isMobile = window.innerWidth <= 768;
+      const startText = isMobile ? 'Tap to start' : 'Click or press SPACE to start';
+      this.ctx.fillText(startText, this.canvasWidth / 2, this.canvasHeight / 2 + 20 * this.scaleFactor);
+      this.ctx.font = `${14 * this.scaleFactor}px monospace`;
+      const controlsText = isMobile 
+        ? 'Controls: Touch to move paddle'
+        : this.gamepadConnected 
+          ? 'Controls: 🎮 Gamepad, Mouse or W/S/↑/↓' 
+          : 'Controls: Mouse or W/S/↑/↓';
+      this.ctx.fillText(controlsText, this.canvasWidth / 2, this.canvasHeight / 2 + 45 * this.scaleFactor);
+      this.ctx.fillText(`First to ${this.WINNING_SCORE} wins!`, this.canvasWidth / 2, this.canvasHeight / 2 + 65 * this.scaleFactor);
     } else if (this.gameState === 'gameover') {
       // Draw game over
       const winner = this.score.player >= this.WINNING_SCORE ? 'YOU WIN!' : 'AI WINS!';
       const winnerColor = this.score.player >= this.WINNING_SCORE ? accentColor : foregroundColor;
       
       this.ctx.fillStyle = winnerColor;
-      this.ctx.font = '28px monospace';
+      this.ctx.font = `${28 * this.scaleFactor}px monospace`;
       this.ctx.textAlign = 'center';
-      this.ctx.fillText(winner, this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 - 20);
+      this.ctx.fillText(winner, this.canvasWidth / 2, this.canvasHeight / 2 - 20 * this.scaleFactor);
       
       this.ctx.fillStyle = foregroundColor;
-      this.ctx.font = '16px monospace';
-      this.ctx.fillText(`Final Score: ${this.score.player} - ${this.score.ai}`, this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 20);
-      this.ctx.font = '14px monospace';
-      this.ctx.fillText('Click to play again', this.CANVAS_WIDTH / 2, this.CANVAS_HEIGHT / 2 + 45);
+      this.ctx.font = `${16 * this.scaleFactor}px monospace`;
+      this.ctx.fillText(`Final Score: ${this.score.player} - ${this.score.ai}`, this.canvasWidth / 2, this.canvasHeight / 2 + 20 * this.scaleFactor);
+      this.ctx.font = `${14 * this.scaleFactor}px monospace`;
+      const isMobile = window.innerWidth <= 768;
+      const playAgainText = isMobile ? 'Tap to play again' : 'Click to play again';
+      this.ctx.fillText(playAgainText, this.canvasWidth / 2, this.canvasHeight / 2 + 45 * this.scaleFactor);
     }
   }
   
@@ -650,6 +750,14 @@ export class PongGame {
       document.removeEventListener('keyup', listeners.handleKeyUp);
       this.canvas.removeEventListener('mousemove', listeners.handleMouseMove);
       this.canvas.removeEventListener('click', listeners.handleClick);
+    }
+    
+    // Remove touch event listeners
+    const touchListeners = (this.canvas as any)._touchListeners;
+    if (touchListeners) {
+      this.canvas.removeEventListener('touchstart', touchListeners.handleTouchStart);
+      this.canvas.removeEventListener('touchmove', touchListeners.handleTouchMove);
+      this.canvas.removeEventListener('touchend', touchListeners.handleTouchEnd);
     }
     
     // Remove gamepad event listeners

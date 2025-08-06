@@ -288,15 +288,17 @@ body {
   font-size: 1.125rem;
 }
 
-/* Pong Game Styles */
-.pong-game-container {
-  margin-bottom: 2rem;
-}
+/* Pong Game Styles - consolidated with main definition below */
 
 .pong-header {
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
   text-align: center;
+  background-color: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+  margin-bottom: 1rem;
+  width: 100%; /* Take full width of parent container */
+  box-sizing: border-box;
 }
 
 .pong-header p {
@@ -305,9 +307,14 @@ body {
 }
 
 .golf-header {
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
   text-align: center;
+  background-color: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+  margin-bottom: 1rem;
+  width: 100%; /* Take full width of parent container */
+  box-sizing: border-box;
 }
 
 .golf-header p {
@@ -315,24 +322,23 @@ body {
   font-size: 1rem;
 }
 
-.pong-game-wrapper {
+/* Game container styles - no padding to match terminal component widths */
+.pong-game-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  background-color: var(--color-background);
-  border: var(--border-width) solid var(--color-border);
-  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+  gap: 2rem;
+  max-width: 800px;
+  margin: 4rem auto;
 }
 
-.golf-game-wrapper {
+.golf-game-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  background-color: var(--color-background);
-  border: var(--border-width) solid var(--color-border);
-  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+  gap: 2rem;
+  max-width: 800px;
+  margin: 4rem auto;
 }
 
 .pong-canvas {
@@ -1145,6 +1151,36 @@ body {
     margin: 1rem auto;
     padding: 1rem;
     gap: 1rem;
+  }
+  
+  /* Mobile game styles - no padding to match terminal component widths */
+  .pong-game-container,
+  .golf-game-container {
+    max-width: 100%;
+    margin: 1rem auto;
+    gap: 1rem;
+  }
+  
+  .pong-canvas,
+  .golf-canvas {
+    max-width: 100%;
+    height: auto;
+    touch-action: none; /* Prevent scrolling on touch */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Game header adjustments for mobile */
+  .pong-header,
+  .golf-header {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .pong-header p,
+  .golf-header p {
+    font-size: 0.85rem;
   }
 
   /* Intro text sizing */

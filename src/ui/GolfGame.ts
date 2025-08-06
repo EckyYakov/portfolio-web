@@ -22,8 +22,9 @@ export class GolfGame {
   private gameLoop: number = 0;
   private gameState: GolfGameState = 'aiming';
   
-  private readonly CANVAS_WIDTH = 600;
-  private readonly CANVAS_HEIGHT = 300;
+  // Game settings - use full container width
+  private readonly CANVAS_WIDTH = 800; // Full container width
+  private readonly CANVAS_HEIGHT = 400; // Maintain aspect ratio
   private readonly BALL_RADIUS = 8;
   private readonly HOLE_RADIUS = 20;
   

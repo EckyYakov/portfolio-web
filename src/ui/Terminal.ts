@@ -218,12 +218,18 @@ export class Terminal {
       if (pongContainer) {
         // The PongGame instance will be created in a setTimeout, so we need to wait
         setTimeout(() => {
-          // Look for the PongGame instance in the game wrapper
-          const gameWrapper = pongContainer.querySelector('.pong-game-wrapper');
-          if (gameWrapper) {
-            // Store reference to the wrapper so we can find the game instance later
-            this.currentGameInstance = { type: 'pong', wrapper: gameWrapper };
-          }
+          // Store reference to the container so we can find the game instance later
+          this.currentGameInstance = { type: 'pong', wrapper: pongContainer };
+        }, 150); // Wait slightly longer than the game's 100ms setTimeout
+      }
+      
+      // Check if this is a Golf game and store reference for cleanup
+      const golfContainer = response.content.querySelector('.golf-game-container');
+      if (golfContainer) {
+        // The GolfGame instance will be created in a setTimeout, so we need to wait
+        setTimeout(() => {
+          // Store reference to the container so we can find the game instance later
+          this.currentGameInstance = { type: 'golf', wrapper: golfContainer };
         }, 150); // Wait slightly longer than the game's 100ms setTimeout
       }
     } else if (response.content.toString().trim()) {

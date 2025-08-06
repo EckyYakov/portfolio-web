@@ -48,25 +48,19 @@ export class CommandProcessor {
           const content = document.createElement('div');
           content.className = 'golf-game-container';
           
-          // Add game header
+          // Add compact game header
           const header = document.createElement('div');
-          header.className = 'golf-header brutal-box';
+          header.className = 'golf-header';
           header.innerHTML = `
             <h2 class="brutal-heading">Mini Golf Challenge 🏌️</h2>
-            <p>You asked for it! 3 holes, see if you can beat par. Aim with mouse, click or SPACE to set power.</p>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+            <p>You asked for it! 3 holes, see if you can beat par. Touch/aim with mouse, tap/click or SPACE to set power.</p>
           `;
           
           content.appendChild(header);
           
-          // Create game wrapper and initialize game
-          const gameWrapper = document.createElement('div');
-          gameWrapper.className = 'golf-game-wrapper';
-          content.appendChild(gameWrapper);
-          
-          // Initialize the game
+          // Initialize the game directly in the main container
           setTimeout(() => {
-            new GolfGame(gameWrapper);
+            new GolfGame(content);
           }, 100);
           
           this.lastCommand = 'golf-game';
@@ -166,25 +160,19 @@ export class CommandProcessor {
         const content = document.createElement('div');
         content.className = 'pong-game-container';
         
-        // Add game header
+        // Add compact game header
         const header = document.createElement('div');
-        header.className = 'pong-header brutal-box';
+        header.className = 'pong-header';
         header.innerHTML = `
           <h2 class="brutal-heading">Pong Game 🏓</h2>
-          <p>Classic Pong! First to 5 points wins. Use mouse or W/S/↑/↓ keys to control your paddle.</p>
-          <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+          <p>Classic Pong! First to 5 points wins. Touch or use mouse/W/S/↑/↓ to control your paddle.</p>
         `;
         
         content.appendChild(header);
         
-        // Create game wrapper and initialize game
-        const gameWrapper = document.createElement('div');
-        gameWrapper.className = 'pong-game-wrapper';
-        content.appendChild(gameWrapper);
-        
-        // Initialize the game
+        // Initialize the game directly in the main container
         setTimeout(() => {
-          new PongGame(gameWrapper);
+          new PongGame(content);
         }, 100);
         
         this.lastCommand = 'pong-game';
@@ -199,25 +187,19 @@ export class CommandProcessor {
         const content = document.createElement('div');
         content.className = 'pong-game-container';
         
-        // Add game header
+        // Add compact game header
         const header = document.createElement('div');
-        header.className = 'pong-header brutal-box';
+        header.className = 'pong-header';
         header.innerHTML = `
           <h2 class="brutal-heading">Pong Game 🏓</h2>
-          <p>Found the pong game! Classic Pong time. First to 5 points wins. Use mouse or W/S/↑/↓ keys to control your paddle.</p>
-          <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+          <p>Found the pong game! First to 5 points wins. Touch or use mouse/W/S/↑/↓ to control your paddle.</p>
         `;
         
         content.appendChild(header);
         
-        // Create game wrapper and initialize game
-        const gameWrapper = document.createElement('div');
-        gameWrapper.className = 'pong-game-wrapper';
-        content.appendChild(gameWrapper);
-        
-        // Initialize the game
+        // Initialize the game directly in the main container
         setTimeout(() => {
-          new PongGame(gameWrapper);
+          new PongGame(content);
         }, 100);
         
         this.lastCommand = 'pong-game';
@@ -233,25 +215,19 @@ export class CommandProcessor {
         const content = document.createElement('div');
         content.className = 'golf-game-container';
         
-        // Add game header
+        // Add compact game header
         const header = document.createElement('div');
-        header.className = 'golf-header brutal-box';
+        header.className = 'golf-header';
         header.innerHTML = `
           <h2 class="brutal-heading">Mini Golf Challenge 🏌️</h2>
-          <p>Found the golf game! 3 holes, see if you can beat par. Aim with mouse, click or SPACE to set power.</p>
-          <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+          <p>Found the golf game! 3 holes, see if you can beat par. Touch/aim with mouse, tap/click or SPACE to set power.</p>
         `;
         
         content.appendChild(header);
         
-        // Create game wrapper and initialize game
-        const gameWrapper = document.createElement('div');
-        gameWrapper.className = 'golf-game-wrapper';
-        content.appendChild(gameWrapper);
-        
-        // Initialize the game
+        // Initialize the game directly in the main container
         setTimeout(() => {
-          new GolfGame(gameWrapper);
+          new GolfGame(content);
         }, 100);
         
         this.lastCommand = 'golf-game';
