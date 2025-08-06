@@ -1,3 +1,5 @@
+import { EasterEggKeywords } from './EasterEggKeywords';
+
 interface Paddle {
   x: number;
   y: number;
@@ -544,7 +546,7 @@ export class PongGame {
           <h2 class="brutal-heading">Game Over! 🏓</h2>
           <p><strong>Final Score:</strong> You ${this.score.player} - ${this.score.ai} AI</p>
           <p style="margin-top: 1.5rem;"><strong>${randomMessage}</strong></p>
-          <p style="margin-top: 1rem;">Ping pong isn't really my strong suit though. I'm more of a <span style="color: var(--color-accent); font-weight: bold;">golfer</span> myself... want to see what I mean? 🏌️</p>
+          <p style="margin-top: 1rem;">${EasterEggKeywords.makeClickable('Ping pong isn\'t really my strong suit though. I\'m more of a <span style="color: var(--color-accent); font-weight: bold;">golfer</span> myself... want to see what I mean? 🏌️', 'golfer', 'golf')}</p>
         </div>
       `;
       

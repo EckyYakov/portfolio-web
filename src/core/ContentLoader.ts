@@ -21,7 +21,7 @@ export class ContentLoader {
     }
 
     try {
-      const response = await fetch('/content/resume.json');
+      const response = await fetch('./content/resume.json');
       const resume = await response.json();
       this.cache.set(cacheKey, resume);
       return resume;
@@ -38,7 +38,7 @@ export class ContentLoader {
     }
 
     try {
-      const response = await fetch('/content/blog/manifest.json');
+      const response = await fetch('./content/blog/manifest.json');
       const posts = await response.json();
       this.cache.set(cacheKey, posts);
       return posts;
@@ -56,7 +56,7 @@ export class ContentLoader {
 
     if (!post.content) {
       try {
-        const response = await fetch(`/content/blog/posts/${slug}.md`);
+        const response = await fetch(`./content/blog/posts/${slug}.md`);
         post.content = await response.text();
       } catch (error) {
         console.error(`Failed to load blog post ${slug}:`, error);

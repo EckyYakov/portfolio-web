@@ -1,3 +1,5 @@
+import { EasterEggKeywords } from './EasterEggKeywords';
+
 export class HackerTerminal {
   private container: HTMLElement;
   private outputElement: HTMLElement;
@@ -283,7 +285,12 @@ export class HackerTerminal {
     this.addLine('> EXITING HACK MODE...');
     this.addLine('');
     this.addLine('[WARNING] Uh oh, our latency is getting slow...');
-    this.addLine(`[NETWORK] I hope the user doesn't check our <span style="color: var(--color-accent); font-weight: bold;">ping</span> 😅`, true);
+    
+    const pingText = EasterEggKeywords.makeClickable(
+      '[NETWORK] I hope the user doesn\'t check our <span style="color: var(--color-accent); font-weight: bold;">ping</span> 😅',
+      'ping'
+    );
+    this.addLine(pingText, true);
   }
 
   private stop(): void {

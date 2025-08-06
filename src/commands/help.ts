@@ -1,5 +1,6 @@
 import type { Command } from '@/types';
 import { QuickSuggestions } from '@/ui/QuickSuggestions';
+import { commands } from './index';
 
 export const helpCommand: Command = {
   name: 'help',
@@ -9,46 +10,19 @@ export const helpCommand: Command = {
     const content = document.createElement('div');
     content.className = 'help-content';
     
+    const commandListHtml = commands
+      .map(command => `
+          <div class="command-item">
+            <span class="command-name">/${command.name}</span>
+            <span class="command-desc">${command.description}</span>
+          </div>`)
+      .join('');
+    
     content.innerHTML = `
       <div class="help-section brutal-box">
         <h2 class="brutal-heading">Available Commands</h2>
         <div class="command-list">
-          <div class="command-item">
-            <span class="command-name">/help</span>
-            <span class="command-desc">Show this help message</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/about</span>
-            <span class="command-desc">Learn about me</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/resume</span>
-            <span class="command-desc">View my professional experience</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/skills</span>
-            <span class="command-desc">See my technical skills</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/projects</span>
-            <span class="command-desc">Browse my portfolio projects</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/contact</span>
-            <span class="command-desc">Get in touch with me</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/blog</span>
-            <span class="command-desc">Read my blog posts (coming soon)</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/theme</span>
-            <span class="command-desc">Toggle between light and dark theme</span>
-          </div>
-          <div class="command-item">
-            <span class="command-name">/clear</span>
-            <span class="command-desc">Clear the terminal</span>
-          </div>
+          ${commandListHtml}
         </div>
         <div class="help-tips">
           <h3>Tips</h3>

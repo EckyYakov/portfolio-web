@@ -1,5 +1,6 @@
 import type { Command, CommandResponse, AutocompleteSuggestion } from '@/types';
 import { QuickSuggestions } from '@/ui/QuickSuggestions';
+import { EasterEggKeywords } from '@/ui/EasterEggKeywords';
 import { PongGame } from '@/ui/PongGame';
 import { HackerTerminal } from '@/ui/HackerTerminal';
 import { GolfGame } from '@/ui/GolfGame';
@@ -114,10 +115,15 @@ export class CommandProcessor {
       
       if (lowerInput === 'hello') {
         const content = document.createElement('div');
+        const hackText = EasterEggKeywords.makeClickable(
+          'Are you trying to <span style="color: var(--color-accent); font-weight: bold;">hack</span> me or something? Good luck.',
+          'hack'
+        );
+        
         content.innerHTML = `
           <div class="easter-egg-response">
             <p><strong>Hello! What are you doing? 👋</strong></p>
-            <p>Are you trying to <span style="color: var(--color-accent); font-weight: bold;">hack</span> me or something? Good luck.</p>
+            <p>${hackText}</p>
             <p style="margin-top: 1rem;">Here are some commands to get you started:</p>
           </div>
           ${QuickSuggestions.generate(QuickSuggestions.HELP_RELATED, 'Quick Commands')}
@@ -132,10 +138,16 @@ export class CommandProcessor {
       
       if (lowerInput === 'ping') {
         const content = document.createElement('div');
+        const playText = EasterEggKeywords.makeClickable(
+          'You know what, that actually sounds pretty fun. I wish I had someone to play with...',
+          'play',
+          'lets play'
+        );
+        
         content.innerHTML = `
           <div class="easter-egg-response">
             <p><strong>Pong 🏓</strong></p>
-            <p style="margin-top: 1rem;">You know what, that actually sounds pretty fun. I wish I had someone to play with...</p>
+            <p style="margin-top: 1rem;">${playText}</p>
           </div>
           ${QuickSuggestions.generate([
             { command: '/help', label: '/help', description: 'See all available commands' },
