@@ -308,7 +308,28 @@ body {
   font-size: 1rem;
 }
 
+.golf-header {
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.golf-header p {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
 .pong-game-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+}
+
+.golf-game-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;

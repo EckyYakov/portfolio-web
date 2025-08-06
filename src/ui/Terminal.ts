@@ -40,7 +40,7 @@ export class Terminal {
           <input 
             type="text" 
             class="command-input" 
-            placeholder="Type /help to start...."
+            placeholder="Type /help to start... or you could just say hello"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"
@@ -74,6 +74,11 @@ export class Terminal {
     window.addEventListener('route-command', (event: Event) => {
       const customEvent = event as CustomEvent;
       this.executeCommand(customEvent.detail);
+    });
+    
+    window.addEventListener('pong-game-ended', () => {
+      // Update the command processor context when pong game ends
+      this.processor.setLastCommand('post-pong');
     });
   }
 

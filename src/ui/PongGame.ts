@@ -25,6 +25,7 @@ type GameState = 'menu' | 'playing' | 'paused' | 'gameover';
 export class PongGame {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
+  private container: HTMLElement;
   private gameLoop: number = 0;
   private gameState: GameState = 'menu';
   
@@ -57,6 +58,7 @@ export class PongGame {
   private gamepadStatusElement: HTMLDivElement | null = null;
   
   constructor(container: HTMLElement) {
+    this.container = container;
     // Create canvas
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.CANVAS_WIDTH;
@@ -338,7 +340,6 @@ export class PongGame {
       
       if (gamepad) {
         // Left analog stick vertical axis (axis 1) or D-pad
-        const leftStickX = gamepad.axes[0] || 0; // X-axis (left/right)
         const leftStickY = gamepad.axes[1] || 0; // Y-axis (up/down)
         const dpadUp = gamepad.buttons[12]?.pressed || false;
         const dpadDown = gamepad.buttons[13]?.pressed || false;
@@ -510,6 +511,7 @@ export class PongGame {
       this.resetBall();
       if (this.score.ai >= this.WINNING_SCORE) {
         this.gameState = 'gameover';
+        this.showPostGameMessage();
       }
     } else if (this.ball.x > this.CANVAS_WIDTH) {
       // Player scores
@@ -517,8 +519,39 @@ export class PongGame {
       this.resetBall();
       if (this.score.player >= this.WINNING_SCORE) {
         this.gameState = 'gameover';
+        this.showPostGameMessage();
       }
     }
+  }
+  
+  private showPostGameMessage(): void {
+    // Add a delay to let the game over screen show for a moment
+    setTimeout(() => {
+      // Clean up the game
+      this.cleanup();
+      
+      // Replace the entire container content with the post-game message
+      const messages = [
+        "Nice game! That was fun!",
+        "Good match! That was actually pretty entertaining.",
+        "Well played! That was a solid game.",
+        "Not bad! That was fun."
+      ];
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      
+      this.container.innerHTML = `
+        <div class="easter-egg-response">
+          <h2 class="brutal-heading">Game Over! 🏓</h2>
+          <p><strong>Final Score:</strong> You ${this.score.player} - ${this.score.ai} AI</p>
+          <p style="margin-top: 1.5rem;"><strong>${randomMessage}</strong></p>
+          <p style="margin-top: 1rem;">Ping pong isn't really my strong suit though. I'm more of a <span style="color: var(--color-accent); font-weight: bold;">golfer</span> myself... want to see what I mean? 🏌️</p>
+        </div>
+      `;
+      
+      // Set context for the command processor
+      // We need to communicate this to the terminal somehow
+      window.dispatchEvent(new CustomEvent('pong-game-ended'));
+    }, 2000); // Show after 2 seconds
   }
   
   private render(): void {
