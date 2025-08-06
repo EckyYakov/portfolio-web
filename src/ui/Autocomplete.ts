@@ -46,10 +46,13 @@ export class Autocomplete {
 
     this.container.querySelectorAll('.autocomplete-item').forEach((item) => {
       item.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const target = e.currentTarget as HTMLElement;
         const index = parseInt(target.dataset.index || '0');
         const suggestion = suggestions[index];
-        this.selectSuggestion(suggestion);
+        // Execute command immediately on click/tap
+        this.selectSuggestion(suggestion, true);
       });
     });
   }

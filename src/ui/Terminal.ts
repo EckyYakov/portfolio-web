@@ -2,6 +2,7 @@ import { CommandProcessor } from '@/core/CommandProcessor';
 import { Router } from '@/core/Router';
 import { Autocomplete } from './Autocomplete';
 import { CommandHistory } from './CommandHistory';
+import { DeviceDetector } from '@/utils/device';
 import type { CommandResponse } from '@/types';
 
 export class Terminal {
@@ -65,11 +66,23 @@ export class Terminal {
   private setupEventListeners(): void {
     this.input.addEventListener('keydown', this.handleKeyDown.bind(this));
     this.input.addEventListener('input', this.handleInput.bind(this));
-    this.input.focus();
-
-    document.addEventListener('click', () => {
+    
+    // Only auto-focus on desktop
+    if (!DeviceDetector.isMobile()) {
       this.input.focus();
-    });
+      
+      document.addEventListener('click', () => {
+        this.input.focus();
+      });
+    } else {
+      // On mobile, only focus when input area is tapped
+      this.inputWrapper.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('.autocomplete-item')) {
+          return; // Don't focus if clicking autocomplete item
+        }
+        this.input.focus();
+      });
+    }
 
     window.addEventListener('route-command', (event: Event) => {
       const customEvent = event as CustomEvent;
@@ -159,6 +172,11 @@ export class Terminal {
     this.currentInput = '';
     this.autocomplete.hide();
 
+    // Blur input on mobile to hide keyboard after command execution
+    if (DeviceDetector.isMobile()) {
+      this.input.blur();
+    }
+
     await this.executeCommand(command);
     this.router.setCommand(command);
   }
@@ -214,6 +232,14 @@ export class Terminal {
       contentDiv.textContent = response.content.toString();
       this.output.appendChild(contentDiv);
     }
+    
+    // Scroll to top of content after loading new content
+    // Small delay to ensure content is fully rendered
+    setTimeout(() => {
+      this.output.scrollTop = 0;
+      // Also scroll the window to ensure the terminal is visible
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 50);
   }
   
   private cleanupCurrentGame(): void {
@@ -252,6 +278,11 @@ export class Terminal {
     this.input.value = '';
     this.currentInput = '';
     this.autocomplete.hide();
+
+    // Blur input on mobile to hide keyboard after command execution
+    if (DeviceDetector.isMobile()) {
+      this.input.blur();
+    }
 
     await this.executeCommand(command);
     this.router.setCommand(command);

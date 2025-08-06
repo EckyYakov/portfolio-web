@@ -999,3 +999,159 @@ body {
   box-shadow: 3px 3px 0 var(--color-shadow);
   background-color: var(--color-accent);
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  /* Terminal wrapper adjustments */
+  .terminal-wrapper {
+    max-width: 100%;
+    margin: 1rem auto;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  /* Intro text sizing */
+  .intro-text {
+    margin-bottom: 1rem;
+  }
+  
+  .intro-text p {
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  /* Input wrapper */
+  .input-wrapper {
+    position: relative;
+  }
+
+  .command-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem;
+  }
+
+  /* Touch-friendly autocomplete items */
+  .autocomplete-item {
+    padding: 0.875rem 1rem;
+    min-height: 44px; /* Minimum touch target size */
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .autocomplete-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Larger tap targets for suggestions */
+  .suggestion-name {
+    font-size: 1rem;
+  }
+
+  .suggestion-desc {
+    font-size: 0.75rem;
+  }
+
+  /* Content window adjustments */
+  .content-window {
+    max-height: 60vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  /* Brutal box adjustments */
+  .brutal-box {
+    box-shadow: 4px 4px 0 var(--color-shadow);
+  }
+
+  /* Resume content adjustments */
+  .resume-header {
+    padding: 1rem;
+  }
+
+  .resume-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .resume-title {
+    font-size: 1.125rem;
+  }
+
+  /* Help section adjustments */
+  .help-section {
+    padding: 1rem;
+  }
+
+  .command-item {
+    padding: 0.5rem;
+  }
+
+  /* Quick suggestions - make them more prominent on mobile */
+  .quick-suggestions {
+    margin-top: 1rem;
+    padding: 0.75rem;
+  }
+
+  .quick-suggestion-item {
+    padding: 0.75rem;
+    min-height: 44px;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Hide keyboard hint on mobile */
+  .key-hint {
+    display: none;
+  }
+
+  /* Command history adjustments - minimal changes */
+  .command-history-container {
+    max-height: 200px;
+  }
+}
+
+/* Touch device specific styles */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .brutal-button:hover {
+    transform: none;
+    box-shadow: 4px 4px 0 var(--color-shadow);
+  }
+
+  .autocomplete-item:hover {
+    background-color: transparent;
+    color: var(--color-foreground);
+  }
+
+  /* Active states for touch */
+  .brutal-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--color-shadow);
+  }
+
+  .autocomplete-item:active {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+  }
+
+  /* Disable text selection on interactive elements */
+  .autocomplete-item,
+  .quick-suggestion-item,
+  .brutal-button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 375px) {
+  .terminal-wrapper {
+    padding: 1rem;
+  }
+
+  .intro-text p {
+    font-size: 1.5rem;
+  }
+
+  .brutal-heading {
+    font-size: 1.5rem;
+  }
+}

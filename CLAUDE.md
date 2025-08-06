@@ -31,10 +31,12 @@ This is a TypeScript-based command-line portfolio website with a neobrutalist de
 
 ### Content Structure
 
-Portfolio content lives in `content/` directory as JSON files:
+Portfolio content lives in `public/content/` directory as JSON files:
 - `resume.json` - Professional experience and skills
-- `projects.json` - Portfolio projects with metadata
+- `projects.json` - Portfolio projects with metadata (if exists)
 - `blog/manifest.json` - Blog post listings (content expansion ready)
+
+**Important**: Content must be in `public/` folder to be included in build output. Fetch paths use `import.meta.env.BASE_URL` for proper deployment.
 
 ### Styling System
 
@@ -54,3 +56,10 @@ The content window has no height constraints - it uses natural page scrolling in
 4. Command handler should return `CommandResponse` with content and type
 
 Commands must handle the `/` prefix - the CommandProcessor strips it before matching command names.
+
+## Deployment
+
+Deployed via GitHub Pages at: https://eckyyakov.github.io/portfolio-web/
+- GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys on push to main
+- Vite config uses `base: '/portfolio-web/'` for correct asset paths
+- ESM modules enabled in package.json (`"type": "module"`) for Vite compatibility
