@@ -63,3 +63,4 @@ Deployed via GitHub Pages at: https://eckyyakov.github.io/portfolio-web/
 - GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys on push to main
 - Vite config uses `base: '/portfolio-web/'` for correct asset paths
 - ESM modules enabled in package.json (`"type": "module"`) for Vite compatibility
+- I do not like emojis in general in buttons and titles, do not use them please
