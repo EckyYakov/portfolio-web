@@ -718,16 +718,19 @@ body {
 /* Command History Styles */
 .command-history-container {
   margin-top: 0.5rem;
-  min-height: 0;
+  /* Pre-allocate height for 2 command history items */
+  min-height: 3.5rem; /* Approximately 2 history items + spacing */
   transition: all 0.3s ease;
 }
 
 .command-history-container:not(.visible) {
-  display: none;
+  /* Keep space reserved even when not visible */
+  visibility: hidden;
+  height: 3.5rem;
 }
 
 .command-history-container.visible {
-  display: block;
+  visibility: visible;
 }
 
 .history-item {
@@ -737,6 +740,12 @@ body {
 
 .history-item:last-child {
   margin-bottom: 0;
+}
+
+/* Placeholder items maintain height but are invisible */
+.history-item.history-placeholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .history-command {
@@ -1317,6 +1326,102 @@ body {
 /* Binary Transition Styles */
 .binary-transition-active {
   /* Keep original fonts and sizes, only change the character display */
+  /* Prevent layout shift during transition */
+  display: block;
+  /* Remove overflow: hidden as it clips shadows - use visible instead */
+  overflow: visible;
+}
+
+/* Ensure brutal-box shadows are always visible during transitions */
+.binary-transition-active.brutal-box,
+.binary-loading.brutal-box {
+  /* Force shadow to be visible */
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow) !important;
+  /* Add some margin to ensure shadow isn't clipped by parent */
+  margin-bottom: calc(var(--shadow-offset) + 0.5rem);
+}
+
+/* Glitch animation for binary entrance - more dramatic shifts */
+@keyframes binaryGlitch {
+  0% { 
+    opacity: 0; 
+    transform: translateX(10px) translateY(5px) skew(5deg);
+  }
+  10% { 
+    opacity: 0.8; 
+    transform: translateX(-8px) translateY(-3px) skew(-3deg);
+  }
+  20% { 
+    opacity: 0.3; 
+    transform: translateX(6px) translateY(-4px) skew(2deg);
+  }
+  30% { 
+    opacity: 1; 
+    transform: translateX(-5px) translateY(2px) skew(-1deg);
+  }
+  40% { 
+    opacity: 0.6; 
+    transform: translateX(4px) translateY(-2px) skew(0deg);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateX(-3px) translateY(1px) skew(0deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(2px) translateY(0) skew(0deg);
+  }
+  70%, 100% { 
+    opacity: 1; 
+    transform: translateX(0) translateY(0) skew(0deg);
+  }
+}
+
+/* Materialize effect for digital appearance */
+@keyframes binaryMaterialize {
+  0% { 
+    opacity: 0;
+    filter: blur(8px) brightness(2);
+    transform: scale(0.95);
+  }
+  40% {
+    opacity: 0.7;
+    filter: blur(3px) brightness(1.5);
+    transform: scale(0.98);
+  }
+  70% {
+    opacity: 0.9;
+    filter: blur(1px) brightness(1.2);
+    transform: scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: scale(1);
+  }
+}
+
+/* Scan line effect - REMOVED due to positioning issues */
+
+/* Binary loading class with combined animations */
+.binary-loading {
+  animation: 
+    binaryGlitch 0.4s ease-out,
+    binaryMaterialize 0.5s ease-out;
+  position: relative;
+  /* Don't use overflow: hidden to preserve shadows */
+}
+
+/* Scan line effect temporarily disabled to debug issue */
+.content-window .binary-loading::before {
+  /* Disabled - was appearing on intro text incorrectly */
+  display: none;
+}
+
+/* Additional glitch lines temporarily disabled to debug issue */
+.content-window .binary-loading::after {
+  /* Disabled - was appearing on intro text incorrectly */
+  display: none;
 }
 
 /* For text nodes during binary transition - use a data attribute approach */

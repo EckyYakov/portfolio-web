@@ -16,8 +16,18 @@ export class BinaryTransition {
     this.cancelAnimation(element);
     
     return new Promise<void>((resolve) => {
-      // Store original content
+      // Store original content and dimensions
       const originalContent = preserveHtml ? element.innerHTML : element.textContent || '';
+      
+      // Capture the original dimensions before changing content (for HTML elements)
+      if (element instanceof HTMLElement) {
+        const originalHeight = element.offsetHeight;
+        const originalWidth = element.offsetWidth;
+        
+        // Apply fixed dimensions to prevent jumping
+        element.style.minHeight = `${originalHeight}px`;
+        element.style.minWidth = `${originalWidth}px`;
+      }
       
       // Generate binary version that preserves styling
       const binaryContent = this.generateBinaryContent(element, preserveHtml);
@@ -29,13 +39,25 @@ export class BinaryTransition {
         element.textContent = binaryContent;
       }
       
-      // Add binary styling marker (minimal styling changes)
+      // Add binary styling and loading animation classes
       element.classList.add('binary-transition-active');
+      element.classList.add('binary-loading');
+      
+      // Remove loading animation class after it completes (500ms)
+      setTimeout(() => {
+        element.classList.remove('binary-loading');
+      }, 500);
       
       let cancelAnimation = false;
       const cleanup = () => {
         cancelAnimation = true;
         element.classList.remove('binary-transition-active');
+        element.classList.remove('binary-loading');
+        // Remove the fixed dimensions after animation completes (for HTML elements)
+        if (element instanceof HTMLElement) {
+          element.style.minHeight = '';
+          element.style.minWidth = '';
+        }
         this.activeAnimations.delete(element);
       };
       
@@ -85,6 +107,7 @@ export class BinaryTransition {
     
     this.walkTextNodes(tempDiv, (textNode) => {
       if (textNode.textContent) {
+        // Use the word-preserving binary generation
         textNode.textContent = this.generateBinaryFromText(textNode.textContent);
       }
     });
@@ -115,13 +138,43 @@ export class BinaryTransition {
   }
   
   private static generateBinaryFromText(text: string): string {
-    return text.split('').map(char => {
-      if (char === ' ') return ' ';
-      if (char === '\n') return '\n';
-      if (char === '\t') return '\t';
+    // Process text word by word to preserve word boundaries and prevent wrapping
+    const words = text.split(/(\s+)/); // Split but keep whitespace
+    
+    return words.map(word => {
+      // If it's whitespace, preserve it exactly
+      if (/^\s+$/.test(word)) {
+        return word;
+      }
       
-      // Generate more 1s than 0s for visual variety (70% chance of 1)
-      return Math.random() < 0.7 ? '1' : '0';
+      // For actual words, create binary that closely matches character widths
+      // This prevents word wrapping changes
+      return word.split('').map((char, index) => {
+        // Special handling for specific characters to maintain width
+        if (char === 'I' || char === 'i') return '1'; // Very narrow
+        if (char === 'l') return '1'; // Very narrow
+        if (char === 'W' || char === 'M') return '0'; // Very wide
+        if (char === 'm' || char === 'w') return '0'; // Wide
+        
+        // For numbers and special chars
+        if (/[0-9]/.test(char)) return '0'; // Numbers are generally wider
+        if (/[.,;:!?]/.test(char)) return '1'; // Punctuation is narrow
+        
+        // For uppercase letters (generally wider)
+        if (/[A-Z]/.test(char)) {
+          // Mix that leans toward 0 for width
+          return index % 3 === 0 ? '1' : '0';
+        }
+        
+        // For lowercase letters (mixed widths)
+        if (/[a-z]/.test(char)) {
+          // Balanced mix with slight bias toward 1
+          return Math.random() < 0.55 ? '1' : '0';
+        }
+        
+        // Default for other characters
+        return Math.random() < 0.6 ? '1' : '0';
+      }).join('');
     }).join('');
   }
   

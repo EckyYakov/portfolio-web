@@ -27,6 +27,10 @@ export class Terminal {
     
     this.setupUI();
     this.setupEventListeners();
+    
+    // Initialize command history with placeholders to prevent height changes
+    this.commandHistory.render();
+    
     this.handleInitialRoute();
   }
 
@@ -218,12 +222,15 @@ export class Terminal {
       this.output.appendChild(response.content);
       
       // Check if this is a game - games should not have binary transitions
-      const isGameContent = response.content.querySelector('.pong-game-container, .golf-game-container, .hacker-terminal-container');
+      const isGameContent = response.content.querySelector('.pong-game-container, .golf-game-container, .hacker-terminal-container') ||
+                          response.content.classList.contains('pong-game-container') ||
+                          response.content.classList.contains('golf-game-container') ||
+                          response.content.classList.contains('hacker-terminal-container');
       
       if (!isGameContent) {
         // Apply binary transition to non-game HTML content
         await BinaryTransition.animateElement(response.content, {
-          delay: 400,
+          delay: 2000,
           charDelay: 8,
           preserveHtml: true
         });
@@ -262,12 +269,11 @@ export class Terminal {
       });
     }
     
-    // Scroll to top of content after loading new content
+    // Reset content container scroll position only
     // Small delay to ensure content is fully rendered
     setTimeout(() => {
       this.output.scrollTop = 0;
-      // Also scroll the window to ensure the terminal is visible
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Don't scroll the window - let users maintain their scroll position
     }, 50);
   }
   

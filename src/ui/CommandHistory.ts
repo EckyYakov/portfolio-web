@@ -26,16 +26,12 @@ export class CommandHistory {
     this.render();
   }
 
-  private render(): void {
+  render(): void {
     if (!this.container) return;
 
-    if (this.history.length === 0) {
-      this.container.innerHTML = '';
-      this.container.classList.remove('visible');
-      return;
-    }
-
-    this.container.innerHTML = this.history
+    // Always render placeholder space for 2 commands to maintain consistent height
+    const placeholderCount = this.maxHistorySize - this.history.length;
+    const historyHtml = this.history
       .map((historyItem, index) => {
         const opacity = this.getOpacity(index);
         const stateClass = `command-${historyItem.state}`;
@@ -46,7 +42,18 @@ export class CommandHistory {
         `;
       })
       .join('');
+    
+    // Add invisible placeholders to maintain height
+    const placeholderHtml = Array(placeholderCount)
+      .fill(0)
+      .map(() => `
+        <div class="history-item history-placeholder" style="visibility: hidden;">
+          <span class="history-command">$ placeholder</span>
+        </div>
+      `)
+      .join('');
 
+    this.container.innerHTML = historyHtml + placeholderHtml;
     this.container.classList.add('visible');
   }
 
