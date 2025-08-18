@@ -1403,25 +1403,349 @@ body {
 
 /* Scan line effect - REMOVED due to positioning issues */
 
-/* Binary loading class with combined animations */
+/* Enhanced binary loading animations */
+@keyframes dataTransmission {
+  0% { 
+    opacity: 0;
+    transform: translateX(-100%) rotateY(90deg);
+    filter: hue-rotate(0deg);
+  }
+  15% { 
+    opacity: 0.3;
+    transform: translateX(-50%) rotateY(45deg);
+    filter: hue-rotate(120deg);
+  }
+  30% { 
+    opacity: 0.7;
+    transform: translateX(-10%) rotateY(15deg);
+    filter: hue-rotate(240deg);
+  }
+  60% { 
+    opacity: 0.9;
+    transform: translateX(0%) rotateY(0deg);
+    filter: hue-rotate(0deg);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateX(0%) rotateY(0deg);
+    filter: hue-rotate(0deg);
+  }
+}
+
+@keyframes digitalPixelation {
+  0% { 
+    filter: pixelate(8px) contrast(2);
+    image-rendering: pixelated;
+  }
+  50% { 
+    filter: pixelate(4px) contrast(1.5);
+  }
+  100% { 
+    filter: pixelate(0px) contrast(1);
+    image-rendering: auto;
+  }
+}
+
+@keyframes chromaticShift {
+  0% { 
+    filter: hue-rotate(0deg) saturate(2);
+    text-shadow: 2px 0 0 rgba(255, 0, 0, 0.5), -2px 0 0 rgba(0, 255, 255, 0.5);
+  }
+  25% { 
+    filter: hue-rotate(90deg) saturate(1.5);
+    text-shadow: 1px 0 0 rgba(255, 0, 255, 0.3), -1px 0 0 rgba(0, 255, 0, 0.3);
+  }
+  50% { 
+    filter: hue-rotate(180deg) saturate(1.2);
+    text-shadow: 0.5px 0 0 rgba(255, 255, 0, 0.2), -0.5px 0 0 rgba(0, 0, 255, 0.2);
+  }
+  75% { 
+    filter: hue-rotate(270deg) saturate(1.1);
+    text-shadow: 0.2px 0 0 rgba(255, 128, 0, 0.1), -0.2px 0 0 rgba(128, 255, 0, 0.1);
+  }
+  100% { 
+    filter: hue-rotate(360deg) saturate(1);
+    text-shadow: none;
+  }
+}
+
+@keyframes scanlineEffect {
+  0% { 
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% { 
+    opacity: 0.8;
+  }
+  100% { 
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+@keyframes dataGlow {
+  0% { 
+    box-shadow: 0 0 5px var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  50% { 
+    box-shadow: 0 0 20px var(--color-accent), 0 0 30px var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  100% { 
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+    border-color: var(--color-border);
+  }
+}
+
+/* Enhanced binary loading class with combined animations */
 .binary-loading {
   animation: 
     binaryGlitch 0.4s ease-out,
-    binaryMaterialize 0.5s ease-out;
+    binaryMaterialize 0.5s ease-out,
+    chromaticShift 0.6s ease-out 0.1s;
   position: relative;
   /* Don't use overflow: hidden to preserve shadows */
 }
 
-/* Scan line effect temporarily disabled to debug issue */
-.content-window .binary-loading::before {
-  /* Disabled - was appearing on intro text incorrectly */
-  display: none;
+/* Data materializing effect */
+.data-materializing {
+  animation: 
+    dataTransmission 0.8s ease-out,
+    digitalPixelation 0.6s ease-out 0.2s;
+  position: relative;
 }
 
-/* Additional glitch lines temporarily disabled to debug issue */
-.content-window .binary-loading::after {
-  /* Disabled - was appearing on intro text incorrectly */
-  display: none;
+/* Container glow effect during loading */
+.binary-loading.brutal-box {
+  animation: 
+    binaryGlitch 0.4s ease-out,
+    binaryMaterialize 0.5s ease-out,
+    dataGlow 1.2s ease-out;
+}
+
+/* Reduced motion alternative */
+.binary-loading-simple {
+  animation: fadeIn 0.3s ease-out;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .binary-loading,
+  .data-materializing,
+  .binary-loading.brutal-box {
+    animation: fadeIn 0.3s ease-out !important;
+  }
+  
+  .data-fragments-container,
+  .binary-loading::before,
+  .binary-loading::after {
+    display: none !important;
+  }
+}
+
+/* Container background effects during loading */
+.content-window {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.content-window:has(.binary-loading) {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(0, 102, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 0, 102, 0.03) 0%, transparent 50%),
+    var(--color-background);
+}
+
+/* Subtle border animation during loading */
+.content-window:has(.binary-loading)::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    var(--color-accent), 
+    var(--color-accent-alt), 
+    var(--color-accent));
+  background-size: 300% 300%;
+  animation: borderScan 2s ease-in-out;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+@keyframes borderScan {
+  0%, 100% { 
+    background-position: 0% 50%;
+  }
+  50% { 
+    background-position: 100% 50%;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  /* Reduce animation complexity on mobile */
+  .binary-loading {
+    animation: 
+      binaryGlitch 0.3s ease-out,
+      binaryMaterialize 0.4s ease-out !important;
+  }
+  
+  .data-materializing {
+    animation: 
+      dataTransmission 0.6s ease-out,
+      digitalPixelation 0.4s ease-out 0.1s !important;
+  }
+  
+  /* Reduce fragment count and duration on mobile */
+  .data-fragment {
+    animation-duration: 0.6s !important;
+    font-size: 0.7rem !important;
+  }
+  
+  /* Simplify container effects on mobile */
+  .content-window:has(.binary-loading) {
+    background: var(--color-background) !important;
+  }
+  
+  .content-window:has(.binary-loading)::before {
+    animation-duration: 1.5s !important;
+    opacity: 0.05 !important;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Further simplify for touch devices */
+  .binary-loading::before,
+  .binary-loading::after {
+    animation-duration: 0.4s !important;
+  }
+  
+  .data-fragments-container {
+    opacity: 0.7 !important;
+  }
+}
+
+/* Data fragments container */
+.data-fragments-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* Individual data fragments */
+.data-fragment {
+  position: absolute;
+  color: var(--color-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: bold;
+  opacity: 0;
+  animation: fragmentMaterialize var(--duration, 1s) ease-out var(--delay, 0s);
+  text-shadow: 0 0 4px currentColor;
+  
+  /* Random positioning */
+  top: calc(10% + 60% * var(--random-y, 0.5));
+  left: calc(10% + 80% * var(--random-x, 0.5));
+}
+
+@keyframes fragmentMaterialize {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px) translateY(-10px) scale(0.8) rotate(-5deg);
+    filter: blur(4px);
+  }
+  20% {
+    opacity: 0.8;
+    transform: translateX(-10px) translateY(-5px) scale(0.9) rotate(-2deg);
+    filter: blur(2px);
+  }
+  40% {
+    opacity: 1;
+    transform: translateX(0px) translateY(0px) scale(1) rotate(0deg);
+    filter: blur(0px);
+  }
+  60% {
+    opacity: 0.9;
+    transform: translateX(5px) translateY(2px) scale(1.05) rotate(1deg);
+  }
+  80% {
+    opacity: 0.6;
+    transform: translateX(8px) translateY(5px) scale(1.1) rotate(2deg);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(15px) translateY(10px) scale(1.2) rotate(5deg);
+    filter: blur(3px);
+  }
+}
+
+/* Re-enabled scanline effect with proper targeting */
+.binary-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10%;
+  width: 120%;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-accent) 20%, 
+    var(--color-accent) 80%, 
+    transparent 100%);
+  opacity: 0;
+  animation: scanlineEffect 0.8s ease-out 0.2s;
+  z-index: 15;
+  box-shadow: 0 0 8px var(--color-accent);
+}
+
+/* Additional glitch overlay */
+.binary-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -5%;
+  width: 110%;
+  height: 1px;
+  background: var(--color-accent-alt);
+  opacity: 0;
+  animation: 
+    scanlineEffect 0.6s ease-out 0.4s,
+    pulseGlow 0.3s ease-out 0.1s;
+  z-index: 15;
+  box-shadow: 0 0 6px var(--color-accent-alt);
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    opacity: 0;
+    transform: scaleX(0.8);
+  }
+  50% { 
+    opacity: 0.9;
+    transform: scaleX(1.2);
+  }
 }
 
 /* For text nodes during binary transition - use a data attribute approach */
