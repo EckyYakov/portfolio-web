@@ -1,5 +1,4 @@
 import { EasterEggKeywords } from './EasterEggKeywords';
-import { DeviceDetector } from '@/utils/device';
 
 export class HackerTerminal {
   private container: HTMLElement;
@@ -98,18 +97,9 @@ export class HackerTerminal {
   }
 
   private setupUI(): void {
-    const isMobile = DeviceDetector.isMobile();
-    const footerContent = isMobile ? 
-      `<div class="hacker-footer-text">
-        <div class="blink">▮</div>
-        <span>Press ESC or tap STOP to terminate</span>
-       </div>
-       <button class="hacker-stop-button" id="hacker-stop-btn">TERMINATE</button>` :
-      `<div class="blink">▮</div>
-       <span>Press ESC or type any command to exit</span>`;
-
+    
     this.container.innerHTML = `
-      <div class="hacker-terminal">
+      <div class="hacker-terminal" id="hacker-terminal">
         <div class="hacker-header">
           <div class="hacker-title">
             <span class="skull">💀</span> HACKERMAN TERMINAL v1.337 <span class="skull">💀</span>
@@ -120,24 +110,48 @@ export class HackerTerminal {
         </div>
         <div class="hacker-output" id="hacker-output"></div>
         <div class="hacker-footer">
-          ${footerContent}
+          <div class="hacker-stop-section">
+            <div class="hacker-stop-main">
+              <button class="hacker-stop-button mega-stop-btn" id="hacker-stop-btn">
+                <span class="stop-icon">⏹</span>
+                <span class="stop-text">CLICK TO STOP HACKING</span>
+                <span class="stop-pulse"></span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     `;
     
     this.outputElement = this.container.querySelector('#hacker-output')!;
     
-    // Add click handler for mobile stop button
-    if (isMobile) {
-      const stopButton = this.container.querySelector('#hacker-stop-btn');
-      if (stopButton) {
-        stopButton.addEventListener('click', () => {
+    // Add click handler for stop button (works for all devices now)
+    const stopButton = this.container.querySelector('#hacker-stop-btn');
+    if (stopButton) {
+      stopButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.normalizeInterface();
+        this.showExitMessage();
+        setTimeout(() => {
+          this.stop();
+        }, 2000);
+      });
+    }
+
+    // Add click handler for the entire terminal area as backup
+    const terminal = this.container.querySelector('#hacker-terminal');
+    if (terminal) {
+      terminal.addEventListener('click', (e) => {
+        // Only trigger if clicking outside the stop button
+        if (!(e.target as Element).closest('#hacker-stop-btn')) {
+          this.normalizeInterface();
           this.showExitMessage();
           setTimeout(() => {
             this.stop();
           }, 2000);
-        });
-      }
+        }
+      });
     }
   }
 
@@ -146,10 +160,12 @@ export class HackerTerminal {
     this.addLine('> INITIATING HACK SEQUENCE...');
     this.addLine('> TARGET ACQUIRED');
     this.addLine('');
+    this.addLine('[INFO] 🎯 CLICK THE BIG RED BUTTON TO STOP! 🎯');
+    this.addLine('');
     
     setTimeout(() => {
       this.runHackingAnimation();
-    }, 1000);
+    }, 1500);
     
     // Listen for ESC key
     const handleKeydown = (e: KeyboardEvent) => {
@@ -299,6 +315,40 @@ export class HackerTerminal {
     return div.innerHTML;
   }
 
+  private normalizeInterface(): void {
+    // Transform the stop button to a normal green state
+    const stopButton = this.container.querySelector('#hacker-stop-btn') as HTMLElement;
+    if (stopButton) {
+      // Remove all the dramatic animations and styling
+      stopButton.classList.add('hack-stopped');
+      stopButton.style.pointerEvents = 'none';
+      
+      // Update button text and appearance
+      const stopText = stopButton.querySelector('.stop-text');
+      const stopIcon = stopButton.querySelector('.stop-icon');
+      if (stopText) stopText.textContent = 'HACK STOPPED';
+      if (stopIcon) stopIcon.textContent = '✓';
+    }
+    
+    // Stop skull animations by removing animation classes
+    const skulls = this.container.querySelectorAll('.skull');
+    skulls.forEach(skull => {
+      (skull as HTMLElement).classList.add('no-animation');
+    });
+    
+    // Stop the blinking subtitle animation
+    const subtitle = this.container.querySelector('.hacker-subtitle');
+    if (subtitle) {
+      (subtitle as HTMLElement).classList.add('no-animation');
+    }
+    
+    // Remove the blinking cursor animation from footer
+    const blinkElements = this.container.querySelectorAll('.blink');
+    blinkElements.forEach(blink => {
+      (blink as HTMLElement).classList.add('no-animation');
+    });
+  }
+
   private showExitMessage(): void {
     this.isRunning = false; // Stop the animation first
     
@@ -307,6 +357,7 @@ export class HackerTerminal {
     this.addLine('> CONNECTION TERMINATED');
     this.addLine('> EXITING HACK MODE...');
     this.addLine('');
+    this.addLine('🎉 Nice job stopping the hack! You found the easter egg!');
     this.addLine('[WARNING] Uh oh, our latency is getting slow...');
     
     const pingText = EasterEggKeywords.makeClickable(
