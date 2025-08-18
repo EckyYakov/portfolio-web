@@ -1314,6 +1314,22 @@ body {
   }
 }
 
+/* Binary Transition Styles */
+.binary-transition-active {
+  /* Keep original fonts and sizes, only change the character display */
+}
+
+/* For text nodes during binary transition - use a data attribute approach */
+.binary-char {
+  /* Inherit all styles from parent */
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+
 /* Contact Command Styles */
 .contact-content {
   width: 100%;

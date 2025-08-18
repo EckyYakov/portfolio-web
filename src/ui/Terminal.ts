@@ -3,6 +3,7 @@ import { Router } from '@/core/Router';
 import { Autocomplete } from './Autocomplete';
 import { CommandHistory } from './CommandHistory';
 import { DeviceDetector } from '@/utils/device';
+import { BinaryTransition } from '@/utils/binaryTransition';
 import type { CommandResponse } from '@/types';
 
 export class Terminal {
@@ -183,7 +184,7 @@ export class Terminal {
 
   private async executeCommand(command: string): Promise<void> {
     const response = await this.processor.execute(command);
-    this.displayResponse(response);
+    await this.displayResponse(response);
     
     // Determine if command was successful based on response content
     const isError = typeof response.content === 'string' && (
@@ -203,15 +204,30 @@ export class Terminal {
     this.commandHistory.addCommand(command, state);
   }
 
-  private displayResponse(response: CommandResponse): void {
+  private async displayResponse(response: CommandResponse): Promise<void> {
     // Cleanup any existing game instances before clearing content
     this.cleanupCurrentGame();
+    
+    // Cancel any existing binary transitions
+    BinaryTransition.cancelAllAnimations();
     
     // Clear previous content
     this.output.innerHTML = '';
     
     if (response.type === 'html' && response.content instanceof HTMLElement) {
       this.output.appendChild(response.content);
+      
+      // Check if this is a game - games should not have binary transitions
+      const isGameContent = response.content.querySelector('.pong-game-container, .golf-game-container, .hacker-terminal-container');
+      
+      if (!isGameContent) {
+        // Apply binary transition to non-game HTML content
+        await BinaryTransition.animateElement(response.content, {
+          delay: 400,
+          charDelay: 8,
+          preserveHtml: true
+        });
+      }
       
       // Check if this is a Pong game and store reference for cleanup
       const pongContainer = response.content.querySelector('.pong-game-container');
@@ -237,6 +253,13 @@ export class Terminal {
       contentDiv.className = 'command-response';
       contentDiv.textContent = response.content.toString();
       this.output.appendChild(contentDiv);
+      
+      // Apply binary transition to text content
+      await BinaryTransition.animateElement(contentDiv, {
+        delay: 400,
+        charDelay: 10,
+        preserveHtml: false
+      });
     }
     
     // Scroll to top of content after loading new content
@@ -268,10 +291,10 @@ export class Terminal {
 
 
 
-  private handleInitialRoute(): void {
+  private async handleInitialRoute(): Promise<void> {
     const command = this.router.parseCommand();
     if (command) {
-      this.executeCommand(command);
+      await this.executeCommand(command);
     }
   }
 
