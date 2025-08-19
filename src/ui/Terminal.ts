@@ -94,6 +94,14 @@ export class Terminal {
       this.executeCommand(customEvent.detail);
     });
     
+    // Listen for filter button clicks from resume command
+    this.output.addEventListener('executeCommand', (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.command) {
+        this.executeCommand(customEvent.detail.command);
+      }
+    });
+    
     window.addEventListener('pong-game-ended', () => {
       // Update the command processor context when pong game ends
       this.processor.setLastCommand('post-pong');

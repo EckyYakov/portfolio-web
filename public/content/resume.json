@@ -1,7 +1,7 @@
 {
   "name": "Evan Steitz",
-  "title": "Senior Engineering Manager",
-  "summary": "Product and Engineering leader and full-stack developer with expertise in building teams, scaling systems, and delivering 0→1 product initiatives.",
+  "title": "Product & Engineering Leader",
+  "summary": "Product-focused engineering leader and full-stack developer with experience leading teams through 0→1 product launches, scaling systems to millions of users, and driving business impact through technical strategy and culture design.",
   "contact": {
     "email": "ejsteitz@gmail.com",
     "github": "eckyyakov"
@@ -9,20 +9,21 @@
   "experience": [
     {
       "company": "Demand IQ",
-      "position": "Senior Engineering Manager",
+      "position": "Product & Engineering Lead",
       "location": "Remote",
       "startDate": "2022-02",
       "endDate": "Present",
       "type": "full-time",
-      "technologies": ["React Native", "TypeScript", "Node.js", "Postgres", "AWS", "GitHub Actions"],
+      "technologies": ["React Native", "TypeScript", "Node.js", "Postgres", "AWS", "GitHub Actions", "Golang", "Figma"],
       "description": [
-        "Built and led a cross-functional team (3 engineers, 1 designer, 1 QA) delivering multiple 0→1 product initiatives, including a fully white-labeled no-code funnel builder and a React Native app for field sales",
-        "Led development of real-time pricing infrastructure and a custom funnel theming system powering hundreds of unique experiences",
-        "Reached $1M ARR milestone through consistent product delivery",
-        "Oversaw onboarding and support for hundreds of customers; used insights to drive engagement",
-        "Joined 50+ sales calls to address technical concerns and increase close rate",
-        "Maintained 0% attrition rate by fostering a team culture of motivation and empathy",
-        "Improved team velocity through Agile process and cross-functional coordination"
+        "Built and led a cross-functional team (3 engineers, 1 designer, 1 QA) delivering multiple 0→1 products, including a white-labeled no-code funnel builder and a React Native app for field sales",
+        "Designed and scaled real-time pricing infrastructure and a custom funnel theming system powering hundreds of unique customer experiences",
+        "Helped drive company growth to $1M ARR milestone through consistent, high-velocity product delivery",
+        "Partnered with customer success and support teams to onboard hundreds of customers, using insights to improve engagement and retention",
+        "Collaborated directly with sales, joining 50+ calls to resolve technical objections and increase close rate",
+        "Fostered a high-motivation, empathetic culture resulting in 0% team attrition",
+        "Improved team velocity and delivery predictability by refining Agile processes and cross-functional coordination",
+        "Created release notes, demos, and customer-facing updates to ensure smooth rollouts and strong feature adoption"
       ]
     },
     {
@@ -32,14 +33,14 @@
       "startDate": "2019-08",
       "endDate": "2022-02",
       "type": "full-time",
-      "technologies": ["Python", "Discord.py", "SQL", "Postgres", "Prometheus", "GitHub Actions", "AWS ECS"],
+      "technologies": ["Python", "Discord.py", "SQL", "Postgres", "Prometheus", "GitHub Actions", "AWS", "Grafana", "Golang"],
       "description": [
-        "Built and scaled a Discord bot game to 30K+ MAUs and a community reaching over 3 million users",
-        "Led a team of 5 engineers through rapid development and scaling projects",
-        "Designed backend systems and CI/CD pipelines, reducing deploy time significantly",
-        "Managed observability and system health with Prometheus and SQL",
-        "Focused on user acquisition and engineering quality, despite revenue challenges",
-        "Doubled feature delivery speed by improving roadmap and grooming processes"
+        "Built and scaled a Discord bot to 30K+ monthly active users and a community spanning 3M+ users across thousands of servers",
+        "Led and mentored a team of 5 engineers, driving rapid iteration and scaling efforts",
+        "Designed backend systems and CI/CD pipelines, cutting deploy times from 4+ hours to less then 15 minutes",
+        "Implemented observability with Prometheus and SQL to ensure reliability and performance at scale",
+        "Balanced user acquisition and engineering quality, delivering major features consistently despite resource constraints",
+        "Collaborated with community managers and designers to prioritize features based on user impact vs. effort, keeping the product competitive in a fast-moving ecosystem."
       ]
     },
     {
@@ -49,12 +50,12 @@
       "startDate": "2018-07",
       "endDate": "2019-08",
       "type": "full-time",
-      "technologies": ["Vue.js", "Kubernetes", "Python", "SQL", "Prometheus"],
+      "technologies": ["Vue.js", "Nuxt", "Kubernetes", "Golang", "Postgres", "Prometheus", "Helm", "Concourse", "Grafana"],
       "description": [
-        "Improved internal API architecture, reducing latency",
-        "Created Vue.js dashboards for monitoring deployments",
-        "Built observability tooling that improved incident response",
-        "Developed internal deployment tools to reduce error rates"
+        "Improved internal API architecture, reducing latency and increasing reliability for systems serving millions of customers",
+        "Built Vue.js dashboards for deployment monitoring, improving visibility for dozens of engineering teams",
+        "Developed observability tooling that reduced incident response times and improved system uptime +4%",
+        "Automated deployment workflows to reduce error rates and increase release confidence"
       ]
     },
     {
@@ -64,11 +65,11 @@
       "startDate": "2017-04",
       "endDate": "2018-07",
       "type": "full-time",
-      "technologies": ["Python", "Chef", "Ansible", "Bash", "Vendor APIs"],
+      "technologies": ["Python", "Chef", "Ansible", "Bash", "Vendor APIs", "VMWare", "Kubernetes", "Helm"],
       "description": [
-        "Built CLI tools to automate deployments, reducing time from 30 minutes to under 60 seconds",
-        "Led network testing automation, halving the time required",
-        "Documented infrastructure tools (Chef, Ansible) to streamline ops"
+        "Developed CLI tools to automate deployments, reducing deploy time from 30 minutes to under 60 seconds",
+        "Led automation of network testing processes, cutting validation time in half and accelerating release cycles",
+        "Authored documentation and training for infrastructure tools (Chef, Ansible), streamlining adoption across operations teams and reducing onboarding time"
       ]
     },
     {
@@ -78,25 +79,72 @@
       "startDate": "2015-05",
       "endDate": "2017-04",
       "type": "full-time",
-      "technologies": ["Chef", "Rundeck", "Linux", "Bash"],
+      "technologies": ["Chef", "Rundeck", "Linux", "Bash", "Ruby"],
       "description": [
-        "Developed Chef cookbooks for core systems, improving efficiency",
-        "Automated builds and deployments, freeing up sysadmin time",
-        "Built internal tools to reduce manual workloads"
+        "Developed Chef cookbooks for core infrastructure, standardizing deployments and improving system reliability across mission-critical environments",
+        "Automated build and deployment pipelines, reducing manual sysadmin workload and accelerating release cycles",
+        "Built internal tooling to eliminate repetitive operational tasks, freeing engineers to focus on higher-value development work"
       ]
     },
     {
       "company": "Independent Consultant",
-      "position": "Process, Culture & Gamification Design",
+      "position": "Full-Stack Engineer",
       "location": "Remote",
-      "startDate": "2021-01",
-      "endDate": "Present",
+      "startDate": "2024-09",
+      "endDate": "2025-18",
       "type": "consulting",
-      "technologies": ["Notion", "Miro", "Zoom", "Figma"],
+      "technologies": ["Discord.py", "Python", "AI Image Generation", "Postgres"],
       "description": [
-        "Audited engineering teams, conducted interviews, and delivered culture/process improvement plans",
-        "Designed gamification systems to drive product engagement and retention",
-        "Collaborated with founders and leads to align technical systems with business strategy"
+        "Designed and built a Discord bot ecosystem supporting a server of 150,000+ users, enabling creation of custom in-game items for theorycrafting, marketing, and community engagement",
+        "Developed a complete command interface and item generation system, including AI-driven image generation and in-Discord visualization for immediate user feedback",
+        "Independently gathered requirements, conducted user interviews, and anticipated user needs to deliver a polished, high-impact product with minimal oversight",
+        "Drove community activation and engagement by creating a seamless experience for users to generate and share content within Discord"
+      ]
+    },
+    {
+      "company": "Independent Consultant",
+      "position": "Organizational Effectiveness & Culture Consultant",
+      "location": "Remote",
+      "startDate": "2023-04",
+      "endDate": "2023-06",
+      "type": "consulting",
+      "technologies": ["N/A"],
+      "description": [
+        "Interviewed leadership and individual contributors across multiple departments to assess alignment, knowledge gaps, and employee satisfaction",
+        "Identified process and cultural friction points, delivering actionable recommendations to improve engagement, retention, and productivity",
+        "Implemented strategies to help employees feel heard, motivated, and empowered, driving organizational effectiveness and cross-functional collaboration",
+        "Facilitated workshops and documentation to align teams with business goals and promote best practices across the company"
+      ]
+    },
+    {
+      "company": "Independent Consultant",
+      "position": "Gamification Design Consultant",
+      "location": "Remote",
+      "startDate": "2019-06",
+      "endDate": "2021-12",
+      "type": "consulting",
+      "technologies": ["N/A"],
+      "description": [
+        "Designed advanced gamification systems for a competition app, going beyond traditional points, badges, and leaderboards to create a platform users wanted to engage with daily",
+        "Partnered with the CEO and investors to position the gamification system as a key product differentiator",
+        "Transformed onboarding and engagement flows to increase active participation and user retention",
+        "Scaled the user base from hundreds to tens of thousands through strategic gamification design",
+        "Collaborated with product and engineering teams to ensure the gamification concepts could be successfully implemented and integrated into the platform"
+      ]
+    },
+    {
+      "company": "Independent Consultant",
+      "position": "Gamification & Process Improvement Consultant",
+      "location": "Remote",
+      "startDate": "2020-09",
+      "endDate": "2021-05",
+      "type": "consulting",
+      "technologies": ["N/A"],
+      "description": [
+        "Designed gamified systems to improve project management and engineering team workflows, integrating team wins, bite-sized goals, and standard points, badges, and leaderboards",
+        "Implemented systems that **doubled story point velocity**, increasing team throughput and efficiency in an Agile environment",
+        "Provided enhanced transparency, data, and motivation to individual contributors and managers, encouraging consistent engagement with project management tools",
+        "Received highly positive feedback from the team, with almost perfect 5 of 5 stars ratings on effectiveness and value of the gamified system"
       ]
     }
   ],
@@ -104,21 +152,20 @@
     {
       "name": "Tiny Teams Baseball",
       "url": "https://www.tiny-teams.com/",
-      "description": "Multiplayer baseball sim with pixel-art graphics",
-      "technologies": ["TypeScript", "Next.js", "Supabase", "Postgres"],
-      "details": [
-        "Built a multiplayer simulation game with asynchronous replays and rich team-building mechanics",
-        "Designed simulation engine, player genetics, and gamified progression"
-      ]
+      "description": "A multiplayer baseball simulation with pixel-art graphics, featuring asynchronous replays, deep team-building mechanics, player genetics, and gamified progression.",
+      "technologies": ["TypeScript", "Next.js", "Supabase", "Postgres"]
     },
     {
-      "name": "TourneyBot",
-      "description": "Tournament automation for Discord",
-      "technologies": ["Discord.py", "Postgres", "AWS ECS"],
-      "details": [
-        "Enabled self-hosted brackets and leaderboard tools for gaming communities",
-        "Included score reporting, moderation tools, and matchmaking"
-      ]
+      "name": "Last Call for Alcohol (LC4A)",
+      "url": "https://www.thegamecrafter.com/games/last-call-for-alcohol1", 
+      "description": "A social deduction tabletop card game where players take turns trying to avoid holding the highest numbered card, using limited information to outwit opponents",
+      "technologies": ["Illustrator", "Photoshop", "Figma"]
+    },
+    {
+      "name": "Spark",
+      "url": "https://store.steampowered.com/app/601130/Spark/", 
+      "description": "A side-scrolling, combo-centric shoot-'em-up released on Steam, where players use an arsenal of four bullet types to create unique combination effects and visually striking firework-style interactions to defeat enemies.",
+      "technologies": ["Game Maker Studio 2", "GML", "Steam"]
     }
   ],
   "education": [
@@ -133,23 +180,20 @@
   "skills": [
     {
       "category": "Languages & Frameworks",
-      "items": ["Javascript", "Typescript", "Python", "Go", "Ruby", "C#", "SQL"]
+      "items": ["TypeScript", "Python", "JavaScript", "Go", "Ruby", "C#", "SQL"]
     },
     {
       "category": "Infrastructure & DevOps",
-      "items": ["AWS", "Docker", "Terraform", "CloudFormation", "Supabase", "Kubernetes", "GitHub Actions", "Chef", "Ansible"]
+      "items": ["Kubernetes", "Docker", "AWS", "Supabase", "Terraform", "CloudFormation", "GitHub Actions", "Chef", "Ansible", "CI/CD pipelines", "Automation", "Monitoring & observability"]
     },
     {
-      "category": "Architecture & Systems",
-      "items": ["API design", "distributed systems", "data modeling", "CI/CD", "automation", "observability", "multiplayer systems"]
-    },
-    {
-      "category": "Leadership & Process",
-      "items": ["Team management", "Agile/Scrum", "hiring", "roadmap planning", "stakeholder alignment", "culture audits", "gamification design"]
+      "category": "Leadership & Product",
+      "items": ["Team management", "Agile/Scrum", "Hiring & onboarding", "Roadmap planning", "Stakeholder alignment", "Culture audits", "Gamification design"]
     }
-  ],
+  ]
+  ,
   "meta": {
-    "version": "1.0.0",
-    "updated": "2025-08-05"
+    "version": "1.0.1",
+    "updated": "2025-08-19"
   }
 }

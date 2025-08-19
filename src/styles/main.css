@@ -913,6 +913,126 @@ body {
   font-size: 1.2rem;
 }
 
+.resume-filters {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  border: var(--border-width) solid var(--color-border);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.filter-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+}
+
+.filter-btn.active {
+  background: var(--color-accent);
+  color: var(--color-background);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+}
+
+.filter-btn:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+
+/* Filter Transition Animations */
+@keyframes digitalCollapse {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+    filter: none;
+  }
+  30% {
+    opacity: 0.8;
+    filter: blur(1px) contrast(1.5);
+    transform: scaleY(1) translateX(2px);
+  }
+  40% {
+    transform: scaleY(1) translateX(-2px);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0);
+    filter: blur(2px);
+    max-height: 0;
+  }
+}
+
+@keyframes digitalMaterialize {
+  0% {
+    opacity: 0;
+    transform: scaleY(0) translateY(-20px);
+    filter: blur(4px);
+  }
+  40% {
+    opacity: 0.5;
+    transform: scaleY(0.8) translateY(-10px);
+    filter: blur(2px) contrast(2);
+  }
+  70% {
+    opacity: 0.9;
+    transform: scaleY(1.02) translateY(0);
+    filter: blur(1px) contrast(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+    filter: none;
+  }
+}
+
+.filter-transition-out {
+  animation: digitalCollapse 0.3s ease-out forwards;
+  transform-origin: top center;
+  overflow: hidden;
+}
+
+.filter-transition-in {
+  animation: digitalMaterialize 0.4s ease-out forwards;
+  transform-origin: top center;
+}
+
+/* Resume sections container */
+.resume-sections {
+  min-height: 200px;
+  position: relative;
+}
+
+.summary-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.summary-section h2 {
+  margin-bottom: 1rem;
+}
+
+.summary-text {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  max-width: 800px;
+}
+
 .resume-footer {
   display: flex;
   justify-content: flex-end;

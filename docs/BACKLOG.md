@@ -12,6 +12,7 @@ A running list of ideas and improvements for the portfolio website.
 - **Download resume** - Add ability to download resume as PDF
 - **Search command** - Search across all content (blog posts, projects, resume)
 - **Stats command** - Show portfolio statistics (projects completed, years of experience, etc.)
+- **Download resume** - downlaod resume as pdf
 
 ## Easter Eggs & Fun
 
