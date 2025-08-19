@@ -1777,9 +1777,9 @@ body {
 
   /* Content window adjustments */
   .content-window {
-    max-height: 60vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    /* Use natural page scrolling instead of container scrolling */
+    max-height: none;
+    overflow-y: visible;
   }
 
   /* Brutal box adjustments */
