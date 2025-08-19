@@ -26,6 +26,19 @@ export class CommandHistory {
     this.render();
   }
 
+  clearToCommand(command: string): void {
+    // Clear all history except keep just the specified command
+    this.history = [{ command, state: 'success' }];
+    this.render();
+  }
+
+  updateLastCommandState(state: 'success' | 'error'): void {
+    if (this.history.length > 0) {
+      this.history[0].state = state;
+      this.render();
+    }
+  }
+
   render(): void {
     if (!this.container) return;
 

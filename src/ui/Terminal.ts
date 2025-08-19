@@ -187,6 +187,14 @@ export class Terminal {
   }
 
   private async executeCommand(command: string): Promise<void> {
+    // Add command to history immediately before execution
+    // Special handling for clear command
+    if (command.toLowerCase() === '/clear' || command.toLowerCase() === '/cls') {
+      this.commandHistory.clearToCommand(command);
+    } else {
+      this.commandHistory.addCommand(command, 'success'); // Optimistically add as success
+    }
+    
     const response = await this.processor.execute(command);
     await this.displayResponse(response);
     
@@ -197,15 +205,15 @@ export class Terminal {
       response.content.includes('Commands must start with /')
     );
     
-    const state = isError ? 'error' : 'success';
-    
     // Only show visual feedback for errors, not success
     if (isError) {
-      this.setCommandState(state);
+      this.setCommandState('error');
+      
+      // Update the history entry to show error state if not a clear command
+      if (!(command.toLowerCase() === '/clear' || command.toLowerCase() === '/cls')) {
+        this.commandHistory.updateLastCommandState('error');
+      }
     }
-    
-    // Add command to history with its state
-    this.commandHistory.addCommand(command, state);
   }
 
   private async displayResponse(response: CommandResponse): Promise<void> {
@@ -307,6 +315,8 @@ export class Terminal {
 
   clear(): void {
     this.output.innerHTML = '';
+    // Clear command history but keep just the clear command
+    this.commandHistory.clearToCommand('/clear');
   }
 
   async executeSelectedCommand(command: string): Promise<void> {
