@@ -383,12 +383,17 @@ body {
   text-shadow: 
     0.5px 0 0 rgba(255, 0, 0, 0.3),
     -0.5px 0 0 rgba(0, 255, 255, 0.3);
+  flex-shrink: 0;
+  margin-right: 1rem;
 }
 
 .autocomplete-item .suggestion-desc {
   text-shadow: 
     0.3px 0 0 rgba(255, 0, 0, 0.2),
     -0.3px 0 0 rgba(0, 255, 255, 0.2);
+  text-align: right;
+  opacity: 0.8;
+  font-size: 0.9rem;
 }
 
 .autocomplete-item:hover,
@@ -2490,4 +2495,5 @@ body {
   .brutal-heading {
     font-size: 1.5rem;
   }
+
 }

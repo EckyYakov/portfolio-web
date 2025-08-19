@@ -58,6 +58,7 @@ export class Terminal {
         
         <div class="content-window" id="output">
         </div>
+        
       </div>
     `;
 
@@ -71,6 +72,20 @@ export class Terminal {
   private setupEventListeners(): void {
     this.input.addEventListener('keydown', this.handleKeyDown.bind(this));
     this.input.addEventListener('input', this.handleInput.bind(this));
+    
+    // Show autocomplete with all commands on focus
+    this.input.addEventListener('focus', () => {
+      if (!this.input.value) {
+        this.autocomplete.update('/');
+      }
+    });
+    
+    this.input.addEventListener('blur', () => {
+      // Hide autocomplete when losing focus
+      setTimeout(() => {
+        this.autocomplete.hide();
+      }, 200);
+    });
     
     // Only auto-focus on desktop
     if (!DeviceDetector.isMobile()) {
@@ -145,8 +160,13 @@ export class Terminal {
     
     if (this.currentInput) {
       this.autocomplete.update(this.currentInput);
+      // Normal autocomplete behavior when typing
     } else {
       this.autocomplete.hide();
+      // Show all commands again if input is empty and focused
+      if (document.activeElement === this.input) {
+        this.autocomplete.update('/');
+      }
     }
   }
 
