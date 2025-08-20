@@ -189,13 +189,10 @@ export const contactCommand: Command = {
       // Animate placeholder text with binary transition - synchronized with main content
       setTimeout(() => {
         const inputs = document.querySelectorAll('.binary-placeholder');
-        console.log('[DEBUG] Starting placeholder binary animation synchronized with main content, found inputs:', inputs.length);
         
-        inputs.forEach((input, index) => {
+        inputs.forEach((input) => {
           const element = input as HTMLInputElement | HTMLTextAreaElement;
           const originalPlaceholder = element.getAttribute('data-placeholder') || '';
-          
-          console.log(`[DEBUG] Starting transition for input ${index} from binary to:`, originalPlaceholder);
           
           // Transition from current binary placeholder to real text
           // Make sure we work with the correct length - use target text length
@@ -226,7 +223,6 @@ export const contactCommand: Command = {
             if (revealedIndices.size === targetText.length) {
               clearInterval(transitionInterval);
               element.classList.remove('binary-placeholder');
-              console.log(`[DEBUG] Completed placeholder animation ${index}`);
             }
           }, 8); // Match the charDelay from main content
         });
