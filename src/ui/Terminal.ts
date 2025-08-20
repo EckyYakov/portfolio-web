@@ -87,22 +87,18 @@ export class Terminal {
       }, 200);
     });
     
-    // Only auto-focus on desktop
+    // Auto-focus on desktop initially
     if (!DeviceDetector.isMobile()) {
       this.input.focus();
-      
-      document.addEventListener('click', () => {
-        this.input.focus();
-      });
-    } else {
-      // On mobile, only focus when input area is tapped
-      this.inputWrapper.addEventListener('click', (e) => {
-        if ((e.target as HTMLElement).closest('.autocomplete-item')) {
-          return; // Don't focus if clicking autocomplete item
-        }
-        this.input.focus();
-      });
     }
+    
+    // Focus when clicking on the input wrapper area (both desktop and mobile)
+    this.inputWrapper.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('.autocomplete-item')) {
+        return; // Don't focus if clicking autocomplete item
+      }
+      this.input.focus();
+    });
 
     window.addEventListener('route-command', (event: Event) => {
       const customEvent = event as CustomEvent;
