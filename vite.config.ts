@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  base: '/portfolio-web/',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
