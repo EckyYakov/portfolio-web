@@ -274,7 +274,7 @@ function generateProjectsSection(projects: any[]): string {
           <div class="project-header">
             <h3 class="project-name">${project.name}</h3>
             <div class="project-links">
-              ${project.url ? `<a href="${project.url}" target="_blank" rel="noopener noreferrer" class="project-link">Check it out 🡥</a>` : ''}
+              ${project.url ? `<a href="${project.url}" target="_blank" rel="noopener noreferrer" class="project-link">Check it out →</a>` : ''}
               ${project.github ? `<a href="${project.github}" target="_blank" rel="noopener noreferrer" class="project-link">📦 GitHub</a>` : ''}
             </div>
           </div>

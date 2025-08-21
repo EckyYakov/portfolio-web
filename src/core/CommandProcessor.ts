@@ -7,18 +7,21 @@ import { GolfGame } from '@/ui/GolfGame';
 
 export class CommandProcessor {
   private commands: Map<string, Command>;
+  private commandsArray: Command[]; // Keep original order
   private history: string[];
   private historyIndex: number;
   private lastCommand: string | null = null;
 
   constructor() {
     this.commands = new Map();
+    this.commandsArray = [];
     this.history = [];
     this.historyIndex = -1;
   }
 
   register(command: Command): void {
     this.commands.set(command.name.toLowerCase(), command);
+    this.commandsArray.push(command); // Store in array to preserve order
     command.aliases?.forEach((alias: string) => {
       this.commands.set(alias.toLowerCase(), command);
     });
@@ -301,19 +304,20 @@ export class CommandProcessor {
   }
 
   getSuggestions(partial: string): AutocompleteSuggestion[] {
-    // If input is just "/", show all commands
+    // If input is just "/", show all commands in original registration order
     if (partial === '/') {
       const suggestions: AutocompleteSuggestion[] = [];
-      this.commands.forEach((command, name) => {
-        if (command.name === name) {
-          suggestions.push({
-            command: `/${name}`,
-            description: command.description,
-            displayText: `/${name}`
-          });
-        }
+      
+      // Use the commandsArray to preserve registration order
+      this.commandsArray.forEach((command) => {
+        suggestions.push({
+          command: `/${command.name}`,
+          description: command.description,
+          displayText: `/${command.name}`
+        });
       });
-      return suggestions.sort((a, b) => a.command.localeCompare(b.command));
+      
+      return suggestions;
     }
 
     // If input starts with "/", handle command completion and subcommand/argument suggestions
@@ -366,7 +370,8 @@ export class CommandProcessor {
             }
           }
         });
-        return suggestions.sort((a, b) => a.command.localeCompare(b.command));
+        // Return suggestions in the order they appear (no sorting)
+        return suggestions;
       }
       
       // If we have a complete command name followed by a space, show subcommands/arguments
@@ -413,7 +418,8 @@ export class CommandProcessor {
           });
         }
         
-        return suggestions.sort((a, b) => a.command.localeCompare(b.command));
+        // Return suggestions in the order they appear (no sorting)
+        return suggestions;
       }
     }
 

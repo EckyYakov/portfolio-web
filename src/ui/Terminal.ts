@@ -250,6 +250,11 @@ export class Terminal {
     // Clear previous content
     this.output.innerHTML = '';
     
+    // Scroll to top immediately on mobile
+    if (DeviceDetector.isMobile()) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
     if (response.type === 'html' && response.content instanceof HTMLElement) {
       this.output.appendChild(response.content);
       
@@ -301,11 +306,10 @@ export class Terminal {
       });
     }
     
-    // Reset content container scroll position only
+    // Reset content container scroll position
     // Small delay to ensure content is fully rendered
     setTimeout(() => {
       this.output.scrollTop = 0;
-      // Don't scroll the window - let users maintain their scroll position
     }, 50);
   }
   

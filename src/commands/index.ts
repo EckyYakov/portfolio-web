@@ -10,7 +10,7 @@ export const commands: Command[] = [
   helpCommand,
   aboutCommand,
   resumeCommand,
-  themeCommand,
   contactCommand,
+  themeCommand,
   clearCommand,
 ];

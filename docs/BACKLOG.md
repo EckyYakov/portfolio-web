@@ -6,7 +6,6 @@ A running list of ideas and improvements for the portfolio website.
 
 - **Blog command** - Display blog posts from the existing blog infrastructure
 - **Projects command** - Dedicated command to showcase projects (currently part of resume)
-- **Contact command** - Display all contact methods with clickable links
 - **Social/links command** - Quick access to GitHub, LinkedIn, and other professional profiles
 - **Command history navigation** - Use up/down arrows to navigate through previous commands
 - **Download resume** - Add ability to download resume as PDF
@@ -38,6 +37,7 @@ A running list of ideas and improvements for the portfolio website.
 - **Tab completion** - More advanced tab completion with cycling through options
 - **Multi-line input** - Support for longer commands or text input
 - **Command aliases** - More flexible command aliases and shortcuts
+- **Resume highlights** - Make it so i can bold, link, underline certain parts of my resume to emphasize.
 
 ## Technical Enhancements
 
