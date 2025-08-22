@@ -56,25 +56,25 @@ export const resumeCommand: Command = {
         return '';
       };
       
-      // Filter experience based on subcommand
-      let filteredExperience = [...resumeData.experience];
+      // Filter work experience based on subcommand
+      let filteredWork = [...resumeData.work];
       
       if (subcommand === 'full-time') {
-        filteredExperience = filteredExperience.filter(exp => exp.type === 'full-time');
+        filteredWork = filteredWork.filter(work => work.type === 'full-time');
       } else if (subcommand === 'consulting') {
-        filteredExperience = filteredExperience.filter(exp => exp.type === 'consulting');
+        filteredWork = filteredWork.filter(work => work.type === 'consulting');
       } else if (subcommand === 'recent') {
-        // Filter to show only current (Present) positions or the single most recent one
-        const currentPositions = filteredExperience.filter(exp => 
-          exp.endDate.toLowerCase() === 'present'
+        // Filter to show only current (no endDate) positions or the single most recent one
+        const currentPositions = filteredWork.filter(work => 
+          !work.endDate || work.endDate?.toLowerCase() === 'present'
         );
         
         if (currentPositions.length > 0) {
           // If there are current positions, show all of them
-          filteredExperience = currentPositions;
+          filteredWork = currentPositions;
         } else {
           // If no current positions, show only the most recent one
-          filteredExperience = filteredExperience
+          filteredWork = filteredWork
             .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
             .slice(0, 1);
         }
@@ -100,11 +100,11 @@ export const resumeCommand: Command = {
         contentSections = generateProjectsSection(resumeData.projects || []);
       } else if (subcommand === 'recent') {
         // Show only recent experience
-        contentSections = generateExperienceSection(filteredExperience, subcommand);
+        contentSections = generateExperienceSection(filteredWork, subcommand);
       } else if (subcommand === 'full-time' || subcommand === 'consulting') {
         // Show filtered experience + other sections
         contentSections = `
-          ${generateExperienceSection(filteredExperience, subcommand)}
+          ${generateExperienceSection(filteredWork, subcommand)}
           ${generateSkillsSection(resumeData.skills)}
           ${generateEducationSection(resumeData.education)}
           ${generateProjectsSection(resumeData.projects || [])}
@@ -113,7 +113,7 @@ export const resumeCommand: Command = {
         // Show full resume (all sections)
         contentSections = `
           ${cachedSections.get('summary') || ''}
-          ${generateExperienceSection(filteredExperience, subcommand)}
+          ${generateExperienceSection(filteredWork, subcommand)}
           ${generateSkillsSection(resumeData.skills)}
           ${generateEducationSection(resumeData.education)}
           ${generateProjectsSection(resumeData.projects || [])}
@@ -122,13 +122,24 @@ export const resumeCommand: Command = {
 
       content.innerHTML = `
         <div class="resume-header brutal-box">
-          <h1 class="brutal-heading">${resumeData.name}</h1>
-          <h2 class="resume-title">${resumeData.title}</h2>
+          <h1 class="brutal-heading">${resumeData.basics.name}</h1>
+          <h2 class="resume-title">${resumeData.basics.label}</h2>
           <div class="contact-info">
-            ${resumeData.contact.email ? `<span>✉ ${resumeData.contact.email}</span>` : ''}
-            ${resumeData.contact.phone ? `<span>📞 ${resumeData.contact.phone}</span>` : ''}
-            ${resumeData.contact.github ? `<span>🔗 github.com/${resumeData.contact.github}</span>` : ''}
+            ${resumeData.basics.email ? `<span>✉ ${resumeData.basics.email}</span>` : ''}
+            ${resumeData.basics.phone ? `<span>📞 ${resumeData.basics.phone}</span>` : ''}
+            ${resumeData.basics.profiles?.find(p => p.network === 'GitHub') ? `<span>🔗 github.com/${resumeData.basics.profiles.find(p => p.network === 'GitHub')?.username}</span>` : ''}
           </div>
+        </div>
+
+        <div class="resume-actions-centered">
+          <a href="${import.meta.env.BASE_URL}resume.pdf" download="Evan_Steitz_Resume.pdf" class="action-btn download-btn">
+            <i class="fas fa-download"></i>
+            Download PDF
+          </a>
+          <button class="action-btn print-btn" id="print-resume-btn">
+            <i class="fas fa-print"></i>
+            Print Resume
+          </button>
         </div>
 
         <div class="resume-filters brutal-box">
@@ -147,20 +158,11 @@ export const resumeCommand: Command = {
           ${contentSections}
         </div>
         
-        ${resumeData.meta ? `
-          <div class="resume-footer">
-            <div class="resume-meta">
-              <span class="meta-version">v${resumeData.meta.version}</span>
-              <span class="meta-updated">Updated ${resumeData.meta.updated}</span>
-            </div>
-          </div>
-        ` : ''}
-        
         ${generateQuickSuggestions(subcommand)}
       `;
 
       
-      // Add click handlers for instant filter buttons
+      // Add click handlers for instant filter buttons and action buttons
       setTimeout(() => {
         const filterButtons = content.querySelectorAll('.filter-btn');
         filterButtons.forEach(btn => {
@@ -172,6 +174,15 @@ export const resumeCommand: Command = {
             }
           });
         });
+
+        // Add print button handler
+        const printBtn = content.querySelector('#print-resume-btn');
+        if (printBtn) {
+          printBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open(`${import.meta.env.BASE_URL}pdf.html`, '_blank');
+          });
+        }
       }, 0);
 
       return {
@@ -187,8 +198,8 @@ export const resumeCommand: Command = {
   }
 };
 
-function generateExperienceSection(experience: any[], subcommand?: string): string {
-  if (experience.length === 0) {
+function generateExperienceSection(workExperience: any[], subcommand?: string): string {
+  if (workExperience.length === 0) {
     return `<div class="brutal-box"><h2 class="brutal-heading">Experience</h2><p>No experience matches your criteria.</p></div>`;
   }
   
@@ -204,26 +215,26 @@ function generateExperienceSection(experience: any[], subcommand?: string): stri
   return `
     <div class="experience-section brutal-box">
       <h2 class="brutal-heading">${sectionTitle}</h2>
-      ${experience.map(exp => `
+      ${workExperience.map(work => `
         <div class="experience-item">
           <div class="experience-header">
-            <h3 class="company-name">${exp.company}</h3>
-            ${exp.type === 'consulting' ? `<span class="experience-type ${exp.type}">${exp.type}</span>` : ''}
+            <h3 class="company-name">${work.name}</h3>
+            ${work.type === 'consulting' ? `<span class="experience-type ${work.type}">${work.type}</span>` : ''}
           </div>
           <div class="position-info">
-            <h4 class="position-title">${exp.position}</h4>
-            ${exp.technologies ? `
+            <h4 class="position-title">${work.position}</h4>
+            ${work.keywords ? `
               <div class="position-technologies">
-                ${exp.technologies.map((tech: string) => `<span class="tech-tag">${tech}</span>`).join('')}
+                ${work.keywords.map((tech: string) => `<span class="tech-tag">${tech}</span>`).join('')}
               </div>
             ` : ''}
             <div class="position-meta">
-              <span class="location">${exp.location}</span>
-              ${exp.type !== 'consulting' ? `<span class="dates">${formatDateRange(exp.startDate, exp.endDate)}</span>` : ''}
+              <span class="location">${work.location || ''}</span>
+              ${work.type !== 'consulting' ? `<span class="dates">${formatDateRange(work.startDate, work.endDate)}</span>` : ''}
             </div>
           </div>
           <ul class="description-list">
-            ${exp.description.map((item: string) => `<li>${item}</li>`).join('')}
+            ${work.highlights.map((item: string) => `<li>${item}</li>`).join('')}
           </ul>
         </div>
       `).join('')}
@@ -237,9 +248,9 @@ function generateSkillsSection(skills: any[]): string {
       <h2 class="brutal-heading">Skills</h2>
       ${skills.map(skillGroup => `
         <div class="skill-group">
-          <h4 class="skill-category">${skillGroup.category}</h4>
+          <h4 class="skill-category">${skillGroup.name}</h4>
           <div class="skill-items">
-            ${skillGroup.items.map((skill: string) => `<span class="skill-tag">${skill}</span>`).join('')}
+            ${skillGroup.keywords.map((skill: string) => `<span class="skill-tag">${skill}</span>`).join('')}
           </div>
         </div>
       `).join('')}
@@ -255,7 +266,7 @@ function generateEducationSection(education: any[]): string {
         <div class="education-item">
           <h3 class="institution">${edu.institution}</h3>
           <div class="degree-info">
-            <span class="degree">${edu.degree} in ${edu.field}</span>
+            <span class="degree">${edu.studyType}${edu.area ? ` in ${edu.area}` : ''}</span>
           </div>
         </div>
       `).join('')}
@@ -280,7 +291,7 @@ function generateProjectsSection(projects: any[]): string {
           </div>
           <p class="project-description">${project.description}</p>
           <div class="project-tech">
-            ${project.technologies.map((tech: string) => `<span class="tech-tag">${tech}</span>`).join('')}
+            ${project.keywords.map((tech: string) => `<span class="tech-tag">${tech}</span>`).join('')}
           </div>
         </div>
       `).join('')}
@@ -288,11 +299,11 @@ function generateProjectsSection(projects: any[]): string {
   `;
 }
 
-function formatDateRange(startDate: string, endDate: string): string {
+function formatDateRange(startDate: string, endDate?: string): string {
   const formatDate = (date: string) => {
     if (date.toLowerCase() === 'present') return 'Present';
     
-    // Handle YYYY-MM format
+    // Handle YYYY-MM-DD format (extract YYYY-MM)
     if (date.includes('-')) {
       const [year, month] = date.split('-');
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -303,7 +314,8 @@ function formatDateRange(startDate: string, endDate: string): string {
     return date;
   };
   
-  return `${formatDate(startDate)} – ${formatDate(endDate)}`;
+  const formattedEndDate = endDate ? formatDate(endDate) : 'Present';
+  return `${formatDate(startDate)} – ${formattedEndDate}`;
 }
 
 function storeSectionsInCache(resumeData: ResumeData): void {
@@ -314,28 +326,28 @@ function storeSectionsInCache(resumeData: ResumeData): void {
   cachedSections.set('summary', `
     <div class="summary-section brutal-box">
       <h2 class="brutal-heading">Summary</h2>
-      <p class="summary-text">${resumeData.summary}</p>
+      <p class="summary-text">${resumeData.basics.summary}</p>
     </div>
   `);
   
   // Cache full experience
-  cachedSections.set('experience-all', generateExperienceSection(resumeData.experience));
+  cachedSections.set('experience-all', generateExperienceSection(resumeData.work));
   
   // Cache filtered experience
-  const currentPositions = resumeData.experience.filter(exp => 
-    exp.endDate.toLowerCase() === 'present'
+  const currentPositions = resumeData.work.filter(work => 
+    !work.endDate || work.endDate?.toLowerCase() === 'present'
   );
   const recentExperience = currentPositions.length > 0 ? currentPositions : 
-    [resumeData.experience.sort((a, b) => 
+    [resumeData.work.sort((a, b) => 
       new Date(b.startDate).getTime() - new Date(a.startDate).getTime())[0]];
   
   cachedSections.set('experience-recent', generateExperienceSection(recentExperience, 'recent'));
   cachedSections.set('experience-fulltime', generateExperienceSection(
-    resumeData.experience.filter(exp => exp.type === 'full-time'),
+    resumeData.work.filter(work => work.type === 'full-time'),
     'full-time'
   ));
   cachedSections.set('experience-consulting', generateExperienceSection(
-    resumeData.experience.filter(exp => exp.type === 'consulting'),
+    resumeData.work.filter(work => work.type === 'consulting'),
     'consulting'
   ));
   

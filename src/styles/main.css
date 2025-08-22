@@ -322,6 +322,298 @@ body {
   opacity: 0.5;
 }
 
+/* PDF Resume Styles */
+.pdf-resume {
+  background: white;
+  color: black;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.4;
+  max-width: 8.5in;
+  margin: 0 auto;
+  padding: 0.5in;
+}
+
+.pdf-page {
+  width: 100%;
+  min-height: 11in;
+  background: white;
+}
+
+/* PDF Header */
+.pdf-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #000;
+  padding-bottom: 1rem;
+}
+
+.pdf-name {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.pdf-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0.25rem 0 0.5rem 0;
+  color: #333;
+}
+
+.pdf-contact {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.pdf-contact-item {
+  position: relative;
+}
+
+.pdf-contact-item:not(:last-child)::after {
+  content: '•';
+  position: absolute;
+  right: -0.6rem;
+  color: #666;
+}
+
+/* PDF Content Layout */
+.pdf-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.pdf-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pdf-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* PDF Sections */
+.pdf-section {
+  break-inside: avoid;
+}
+
+.pdf-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.25rem;
+}
+
+.pdf-summary {
+  font-size: 0.95rem;
+  margin: 0;
+  text-align: justify;
+}
+
+/* PDF Job Entries */
+.pdf-job {
+  margin-bottom: 1.25rem;
+  break-inside: avoid;
+}
+
+.pdf-job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.pdf-job-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pdf-company {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.pdf-job-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.pdf-dates {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.pdf-location {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.pdf-job-summary {
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0 0 0.5rem 0;
+  color: #444;
+}
+
+.pdf-highlights {
+  margin: 0.5rem 0;
+  padding-left: 1.2rem;
+}
+
+.pdf-highlights li {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+/* PDF Tech Tags */
+.pdf-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.pdf-tech-tag {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+/* PDF Projects */
+.pdf-project {
+  margin-bottom: 1rem;
+  break-inside: avoid;
+}
+
+.pdf-project-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.pdf-project-desc {
+  font-size: 0.85rem;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+}
+
+/* PDF Skills */
+.pdf-skill-group {
+  margin-bottom: 1rem;
+}
+
+.pdf-skill-category {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.pdf-skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.pdf-skill-item {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+}
+
+/* PDF Education */
+.pdf-education {
+  margin-bottom: 0.75rem;
+}
+
+.pdf-degree {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pdf-institution {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.pdf-grad-year {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* PDF Print Instructions */
+.pdf-instructions {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+}
+
+.pdf-print-note h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.pdf-print-note ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.pdf-print-note li {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Print Media Query */
+@media print {
+  .pdf-resume {
+    max-width: none;
+    margin: 0;
+    padding: 0.5in;
+  }
+  
+  .pdf-instructions {
+    display: none !important;
+  }
+  
+  .pdf-page {
+    min-height: auto;
+  }
+  
+  .pdf-section {
+    break-inside: avoid;
+  }
+  
+  .pdf-job {
+    break-inside: avoid;
+  }
+  
+  .pdf-project {
+    break-inside: avoid;
+  }
+}
+
 /* Autocomplete */
 .autocomplete-container {
   position: absolute;
@@ -958,6 +1250,79 @@ body {
 .filter-btn:active {
   transform: translate(0, 0);
   box-shadow: none;
+}
+
+/* Resume Action Buttons */
+.resume-actions-centered {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-accent);
+  color: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: center;
+  box-sizing: border-box;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--color-shadow);
+}
+
+.action-btn:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+
+.action-btn i {
+  font-size: 1rem;
+}
+
+.download-btn {
+  background: var(--color-accent);
+}
+
+.print-btn {
+  background: var(--color-accent-alt);
+}
+
+/* Mobile styles for action buttons */
+@media (max-width: 768px) {
+  .resume-actions-centered {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .action-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    flex: 1;
+    max-width: 150px;
+    justify-content: center;
+  }
+  
+  .action-btn i {
+    font-size: 0.9rem;
+  }
 }
 
 /* Filter Transition Animations */

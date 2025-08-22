@@ -50,56 +50,86 @@ export interface BlogPost {
   content?: string;
 }
 
+// JSON Resume Standard Types
 export interface ResumeData {
-  name: string;
-  title: string;
-  summary: string;
-  contact: {
-    email?: string;
-    phone?: string;
-    github?: string;
-    linkedin?: string;
-    website?: string;
-  };
-  experience: ExperienceItem[];
+  $schema?: string;
+  basics: BasicsInfo;
+  work: WorkExperience[];
   education: EducationItem[];
   projects?: ProjectItem[];
-  skills: {
-    category: string;
-    items: string[];
-  }[];
-  meta?: {
-    version: string;
-    updated: string;
-  };
+  skills: SkillGroup[];
 }
 
-export interface ExperienceItem {
-  company: string;
+export interface BasicsInfo {
+  name: string;
+  label: string;
+  email?: string;
+  phone?: string;
+  url?: string;
+  summary: string;
+  location?: Location;
+  profiles?: Profile[];
+}
+
+export interface Location {
+  address?: string;
+  postalCode?: string;
+  city?: string;
+  countryCode?: string;
+  region?: string;
+}
+
+export interface Profile {
+  network: string;
+  username: string;
+  url: string;
+}
+
+export interface WorkExperience {
+  name: string;
   position: string;
-  location: string;
+  location?: string;
+  url?: string;
   startDate: string;
-  endDate: string;
-  type: string;
-  technologies?: string[];
-  description: string[];
+  endDate?: string;
+  summary?: string;
+  highlights: string[];
+  keywords?: string[];
+  type?: string; // Custom field for full-time/consulting distinction
+}
+
+export interface EducationItem {
+  institution: string;
+  url?: string;
+  area?: string;
+  studyType?: string;
+  startDate?: string;
+  endDate?: string;
+  score?: string;
+  courses?: string[];
+}
+
+export interface SkillGroup {
+  name: string;
+  level?: string;
+  keywords: string[];
 }
 
 export interface ProjectItem {
   name: string;
   description: string;
-  technologies: string[];
-  details: string[];
+  highlights?: string[];
+  keywords?: string[];
+  startDate?: string;
+  endDate?: string;
   url?: string;
+  roles?: string[];
+  entity?: string;
+  type?: string;
+  // Legacy fields for backward compatibility in display
+  technologies?: string[];
+  details?: string[];
   github?: string;
-}
-
-export interface EducationItem {
-  institution: string;
-  degree: string;
-  field: string;
-  startDate: string;
-  endDate: string;
 }
 
 export interface Theme {

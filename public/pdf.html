@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evan Steitz - Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* PDF-only styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: white;
+      color: black;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .pdf-resume {
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 0.5in;
+      background: white;
+    }
+
+    .pdf-page {
+      width: 100%;
+      min-height: 11in;
+      background: white;
+    }
+
+    /* PDF Header */
+    .pdf-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #000;
+      padding-bottom: 1rem;
+    }
+
+    .pdf-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .pdf-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin: 0.25rem 0 0.5rem 0;
+      color: #333;
+    }
+
+    .pdf-contact {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .pdf-contact-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .pdf-contact-item:not(:last-child)::after {
+      content: '•';
+      position: absolute;
+      right: -0.6rem;
+      color: #666;
+    }
+
+    .pdf-contact-item a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .pdf-contact-item a:hover {
+      text-decoration: underline;
+    }
+
+    .contact-icon {
+      width: 14px;
+      height: 14px;
+      color: #333;
+    }
+
+    /* PDF Content Layout - Single column for continuous flow */
+    .pdf-content {
+      margin-top: 1.5rem;
+    }
+
+    .pdf-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .pdf-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    /* PDF Sections - Allow natural flow */
+    .pdf-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .pdf-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0 0 0.75rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.25rem;
+    }
+
+    .pdf-summary {
+      font-size: 0.95rem;
+      margin: 0;
+      text-align: justify;
+    }
+
+    /* PDF Job Entries - Allow natural breaks */
+    .pdf-job {
+      margin-bottom: 1.25rem;
+    }
+
+    .pdf-job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .pdf-job-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .pdf-company {
+      font-size: 0.9rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .pdf-job-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .pdf-dates {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .pdf-location {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .pdf-job-summary {
+      font-size: 0.9rem;
+      font-style: italic;
+      margin: 0 0 0.5rem 0;
+      color: #444;
+    }
+
+    .pdf-highlights {
+      margin: 0.5rem 0;
+      padding-left: 1.2rem;
+    }
+
+    .pdf-highlights li {
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+
+    /* PDF Tech Tags */
+    .pdf-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .pdf-tech-tag {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    /* PDF Projects - Allow natural breaks */
+    .pdf-project {
+      margin-bottom: 1rem;
+    }
+
+    .pdf-project-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .pdf-project-name a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .pdf-project-name a:hover {
+      text-decoration: underline;
+    }
+
+    .pdf-project-desc {
+      font-size: 0.85rem;
+      margin: 0 0 0.25rem 0;
+      line-height: 1.3;
+    }
+
+    /* PDF Skills */
+    .pdf-skill-group {
+      margin-bottom: 1rem;
+    }
+
+    .pdf-skill-category {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .pdf-skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .pdf-skill-item {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.4rem;
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      border-radius: 2px;
+    }
+
+    /* PDF Education */
+    .pdf-education {
+      margin-bottom: 0.75rem;
+    }
+
+    .pdf-degree {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .pdf-institution {
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .pdf-grad-year {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* Print Media Query - Continuous flow */
+    @media print {
+      .pdf-resume {
+        max-width: none;
+        margin: 0;
+        padding: 0.4in;
+        font-size: 11px;
+      }
+      
+      .pdf-page {
+        min-height: auto;
+      }
+      
+      /* Ensure links are visible in print */
+      a {
+        color: #000 !important;
+        text-decoration: underline;
+      }
+      
+      /* Hide icons in print for cleaner look */
+      .contact-icon {
+        display: none;
+      }
+      
+      /* Reduce gaps for better space utilization */
+      .pdf-section {
+        margin-bottom: 1rem;
+      }
+      
+      .pdf-job {
+        margin-bottom: 1rem;
+      }
+      
+      .pdf-project {
+        margin-bottom: 0.75rem;
+      }
+      
+      .pdf-skill-group {
+        margin-bottom: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="pdf-resume">
+    <div class="pdf-page" id="resume-content">
+      <!-- Content will be loaded here -->
+    </div>
+  </div>
+
+  <script type="module">
+    async function loadResumeData() {
+      try {
+        const response = await fetch('/content/resume.json');
+        const resumeData = await response.json();
+        
+        const content = document.getElementById('resume-content');
+        
+        content.innerHTML = `
+          <!-- Header Section -->
+          <div class="pdf-header">
+            <h1 class="pdf-name">${resumeData.basics.name}</h1>
+            <h2 class="pdf-title">${resumeData.basics.label}</h2>
+            <div class="pdf-contact">
+              <span class="pdf-contact-item">
+                <i class="fas fa-envelope contact-icon"></i>
+                <a href="mailto:${resumeData.basics.email}">${resumeData.basics.email}</a>
+              </span>
+              ${resumeData.basics.location ? `<span class="pdf-contact-item">
+                <i class="fas fa-map-marker-alt contact-icon"></i>
+                ${resumeData.basics.location.city}, ${resumeData.basics.location.region}
+              </span>` : ''}
+              ${resumeData.basics.url ? `<span class="pdf-contact-item">
+                <i class="fas fa-globe contact-icon"></i>
+                <a href="${resumeData.basics.url}" target="_blank">${resumeData.basics.url}</a>
+              </span>` : ''}
+              ${resumeData.basics.profiles?.find(p => p.network === 'GitHub') ? `<span class="pdf-contact-item">
+                <i class="fab fa-github contact-icon"></i>
+                <a href="${resumeData.basics.profiles.find(p => p.network === 'GitHub')?.url}" target="_blank">github.com/${resumeData.basics.profiles.find(p => p.network === 'GitHub')?.username}</a>
+              </span>` : ''}
+            </div>
+          </div>
+
+          <!-- Two Column Layout -->
+          <div class="pdf-content">
+            <!-- Main Column -->
+            <div class="pdf-main">
+              <!-- Summary -->
+              <div class="pdf-section">
+                <h3 class="pdf-section-title">Professional Summary</h3>
+                <p class="pdf-summary">${resumeData.basics.summary}</p>
+              </div>
+
+              <!-- Full-Time Experience -->
+              <div class="pdf-section">
+                <h3 class="pdf-section-title">Experience</h3>
+                ${generatePDFFullTimeExperience(resumeData.work)}
+              </div>
+
+              <!-- Consulting Experience -->
+              <div class="pdf-section">
+                <h3 class="pdf-section-title">Consulting</h3>
+                ${generatePDFConsultingExperience(resumeData.work)}
+              </div>
+
+              <!-- Projects -->
+              ${resumeData.projects && resumeData.projects.length > 0 ? `
+                <div class="pdf-section">
+                  <h3 class="pdf-section-title">Projects</h3>
+                  ${generatePDFProjects(resumeData.projects)}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Sidebar Column -->
+            <div class="pdf-sidebar">
+              <!-- Skills -->
+              <div class="pdf-section">
+                <h3 class="pdf-section-title">Skills</h3>
+                ${generatePDFSkills(resumeData.skills)}
+              </div>
+
+              <!-- Education -->
+              <div class="pdf-section">
+                <h3 class="pdf-section-title">Education</h3>
+                ${generatePDFEducation(resumeData.education)}
+              </div>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        console.error('Error loading resume data:', error);
+      }
+    }
+
+    function generatePDFFullTimeExperience(work) {
+      // Filter and sort full-time work by date (most recent first)
+      const fullTimeWork = work.filter(w => w.type === 'full-time');
+      const sortedWork = fullTimeWork.sort((a, b) => {
+        // Handle current positions (no endDate) - they should be first
+        if (!a.endDate && b.endDate) return -1;
+        if (a.endDate && !b.endDate) return 1;
+        if (!a.endDate && !b.endDate) {
+          return new Date(b.startDate) - new Date(a.startDate);
+        }
+        
+        // For positions with end dates, sort by end date
+        return new Date(b.endDate || b.startDate) - new Date(a.endDate || a.startDate);
+      });
+      
+      return generateJobHTML(sortedWork);
+    }
+
+    function generatePDFConsultingExperience(work) {
+      // Filter and sort consulting work by date (most recent first)
+      const consultingWork = work.filter(w => w.type === 'consulting');
+      const sortedWork = consultingWork.sort((a, b) => {
+        // Handle current positions (no endDate) - they should be first
+        if (!a.endDate && b.endDate) return -1;
+        if (a.endDate && !b.endDate) return 1;
+        if (!a.endDate && !b.endDate) {
+          return new Date(b.startDate) - new Date(a.startDate);
+        }
+        
+        // For positions with end dates, sort by end date
+        return new Date(b.endDate || b.startDate) - new Date(a.endDate || a.startDate);
+      });
+      
+      return generateJobHTML(sortedWork);
+    }
+
+    function generateJobHTML(jobs) {
+      return jobs.map(job => `
+        <div class="pdf-job">
+          <div class="pdf-job-header">
+            <div class="pdf-job-left">
+              <h4 class="pdf-job-title">${job.position}</h4>
+              <div class="pdf-company">${job.name}</div>
+            </div>
+            <div class="pdf-job-right">
+              <div class="pdf-dates">${formatPDFDateRange(job.startDate, job.endDate)}</div>
+              ${job.location ? `<div class="pdf-location">${job.location}</div>` : ''}
+            </div>
+          </div>
+          ${job.summary ? `<p class="pdf-job-summary">${job.summary}</p>` : ''}
+          <ul class="pdf-highlights">
+            ${job.highlights.slice(0, 4).map(highlight => `<li>${highlight}</li>`).join('')}
+          </ul>
+          ${job.keywords && job.keywords.length > 0 ? `
+            <div class="pdf-tech">
+              ${job.keywords.slice(0, 8).map(tech => `<span class="pdf-tech-tag">${tech}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function generatePDFProjects(projects) {
+      return projects.slice(0, 3).map(project => `
+        <div class="pdf-project">
+          <h4 class="pdf-project-name">
+            ${project.url ? `<a href="${project.url}" target="_blank">${project.name}</a>` : project.name}
+          </h4>
+          <p class="pdf-project-desc">${project.description}</p>
+          ${project.keywords && project.keywords.length > 0 ? `
+            <div class="pdf-tech">
+              ${project.keywords.map(tech => `<span class="pdf-tech-tag">${tech}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function generatePDFSkills(skills) {
+      return skills.map(skillGroup => `
+        <div class="pdf-skill-group">
+          <h4 class="pdf-skill-category">${skillGroup.name}</h4>
+          <div class="pdf-skill-list">
+            ${skillGroup.keywords.map(skill => `<span class="pdf-skill-item">${skill}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function generatePDFEducation(education) {
+      return education.map(edu => `
+        <div class="pdf-education">
+          <h4 class="pdf-degree">${edu.studyType}${edu.area ? ` in ${edu.area}` : ''}</h4>
+          <div class="pdf-institution">${edu.institution}</div>
+          ${edu.endDate ? `<div class="pdf-grad-year">${formatPDFYear(edu.endDate)}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function formatPDFDateRange(startDate, endDate) {
+      const formatDate = (date) => {
+        const [year, month] = date.split('-');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${monthNames[parseInt(month) - 1]} ${year}`;
+      };
+      
+      const formattedEndDate = endDate ? formatDate(endDate) : 'Present';
+      return `${formatDate(startDate)} – ${formattedEndDate}`;
+    }
+
+    function formatPDFYear(date) {
+      return date.split('-')[0];
+    }
+
+    // Load resume data when page loads
+    loadResumeData();
+  </script>
+</body>
+</html>
