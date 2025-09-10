@@ -5,13 +5,11 @@ A running list of ideas and improvements for the portfolio website.
 ## Features & Commands
 
 - **Blog command** - Display blog posts from the existing blog infrastructure
-- **Projects command** - Dedicated command to showcase projects (currently part of resume)
+- **Projects command** - Dedicated command to showcase projects (currently part of resume) 
 - **Social/links command** - Quick access to GitHub, LinkedIn, and other professional profiles
 - **Command history navigation** - Use up/down arrows to navigate through previous commands
-- **Download resume** - Add ability to download resume as PDF
 - **Search command** - Search across all content (blog posts, projects, resume)
 - **Stats command** - Show portfolio statistics (projects completed, years of experience, etc.)
-- **Download resume** - downlaod resume as pdf
 
 ## Easter Eggs & Fun
 
@@ -24,14 +22,9 @@ A running list of ideas and improvements for the portfolio website.
 
 ## UI/UX Improvements
 
-- **Loading states** - Smooth transitions when fetching content
 - **Command execution animations** - Visual feedback when running commands
 - **Typing animation** - Simulate typing effect for certain responses
-  - Progressive reveal of text content (char by char or line by line)
-  - Different speeds for different content types (faster for data, slower for narrative text)
   - Option to skip animation with click or keypress
-  - Could apply to: command responses, about text, blog posts
-  - Consider chunked rendering for better performance with large content
 - **Custom cursor** - Terminal-style blinking cursor
 - **Sound effects** - Optional retro terminal sounds
 - **Tab completion** - More advanced tab completion with cycling through options
@@ -41,14 +34,13 @@ A running list of ideas and improvements for the portfolio website.
 
 ## Technical Enhancements
 
-- **Analytics/visitor counter** - Track which commands are most used
 - **Command usage heatmap** - Visual representation of popular commands
-- **Export session** - Save terminal session as text file
-- **Theming system** - Multiple theme options beyond light/dark
 - **Localization** - Support for multiple languages
 - **Offline mode** - PWA support for offline access
 - **Share functionality** - Share specific commands or content
 - **Bookmarkable commands** - URL routing for specific commands
+- **Improve SEO/Previews** - Make it so the preview url makes sense and we have SEO in place just in case
+- **Put in GA4** - Analytics for visitor tracking
 
 ## Content Ideas
 
@@ -57,19 +49,11 @@ A running list of ideas and improvements for the portfolio website.
 - **Now page** - What I'm currently working on
 - **Timeline command** - Interactive career timeline
 - **Achievements command** - Professional achievements and certifications
-- **Speaking command** - Conference talks and presentations
-- **Writing samples** - Code snippets and technical writing examples
 
 ## Mobile Experience
-
-- **Better mobile keyboard handling** - Improved input on mobile devices
-- **Swipe gestures** - Navigate commands with swipes
-- **Mobile-specific UI adjustments** - Optimize layout for smaller screens
 - **Voice commands** - Experimental voice input support
 
 ## Integration Ideas
 
 - **GitHub integration** - Show live GitHub stats
 - **RSS feed** - Generate RSS for blog posts
-- **API endpoint** - Expose portfolio data as JSON API
-- **Discord/Slack bot** - Portfolio bot for messaging platforms

@@ -623,29 +623,28 @@ export class PongGame {
   private showPostGameMessage(): void {
     // Add a delay to let the game over screen show for a moment
     setTimeout(() => {
-      // Clean up the game
-      this.cleanup();
+      // Find the pong header element instead of replacing everything
+      const headerElement = this.container.parentElement?.querySelector('.pong-header') as HTMLElement;
       
-      // Replace the entire container content with the post-game message
-      const messages = [
-        "Nice game! That was fun!",
-        "Good match! That was actually pretty entertaining.",
-        "Well played! That was a solid game.",
-        "Not bad! That was fun."
-      ];
-      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-      
-      this.container.innerHTML = `
-        <div class="easter-egg-response">
+      if (headerElement) {
+        const messages = [
+          "Nice game! That was fun!",
+          "Good match! That was actually pretty entertaining.",
+          "Well played! That was a solid game.",
+          "Not bad! That was fun."
+        ];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        
+        // Replace just the header content with the completion message
+        headerElement.innerHTML = `
           <h2 class="brutal-heading">Game Over! 🏓</h2>
           <p><strong>Final Score:</strong> You ${this.score.player} - ${this.score.ai} AI</p>
           <p style="margin-top: 1.5rem;"><strong>${randomMessage}</strong></p>
           <p style="margin-top: 1rem;">${EasterEggKeywords.makeClickable('Ping pong isn\'t really my strong suit though. I\'m more of a <span style="color: var(--color-accent); font-weight: bold;">golfer</span> myself... want to see what I mean? 🏌️', 'golfer', 'golf')}</p>
-        </div>
-      `;
+        `;
+      }
       
       // Set context for the command processor
-      // We need to communicate this to the terminal somehow
       window.dispatchEvent(new CustomEvent('pong-game-ended'));
     }, 2000); // Show after 2 seconds
   }
