@@ -132,10 +132,6 @@ export class Terminal {
       }
     });
     
-    window.addEventListener('pong-game-ended', () => {
-      // Update the command processor context when pong game ends
-      this.processor.setLastCommand('post-pong');
-    });
   }
 
   private handleKeyDown(event: KeyboardEvent): void {

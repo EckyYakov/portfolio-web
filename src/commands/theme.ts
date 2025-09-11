@@ -4,7 +4,7 @@ import { QuickSuggestions } from '@/ui/QuickSuggestions';
 
 export const themeCommand: Command = {
   name: 'theme',
-  description: 'Change theme or toggle between light and dark',
+  description: 'Customize the colors of the website',
   aliases: ['dark', 'light'],
   suggestions: {
     subcommands: [

@@ -1,4 +1,3 @@
-import { EasterEggKeywords } from './EasterEggKeywords';
 import { analytics } from '@/services/analytics';
 
 interface Paddle {
@@ -651,12 +650,9 @@ export class PongGame {
           <h2 class="brutal-heading">Game Over! 🏓</h2>
           <p><strong>Final Score:</strong> You ${this.score.player} - ${this.score.ai} AI</p>
           <p style="margin-top: 1.5rem;"><strong>${randomMessage}</strong></p>
-          <p style="margin-top: 1rem;">${EasterEggKeywords.makeClickable('Ping pong isn\'t really my strong suit though. I\'m more of a <span style="color: var(--color-accent); font-weight: bold;">golfer</span> myself... want to see what I mean? 🏌️', 'golfer', 'golf')}</p>
+          <p style="margin-top: 1rem;">Thanks for playing! Run another command or type <strong>/play</strong> to see more games.</p>
         `;
       }
-      
-      // Set context for the command processor
-      window.dispatchEvent(new CustomEvent('pong-game-ended'));
     }, 2000); // Show after 2 seconds
   }
 

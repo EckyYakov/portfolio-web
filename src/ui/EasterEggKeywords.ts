@@ -6,16 +6,12 @@ export interface EasterEggKeyword {
 
 export class EasterEggKeywords {
   static readonly KEYWORDS: EasterEggKeyword[] = [
-    { keyword: 'hack', trigger: 'hack', description: 'Enter hacker terminal' },
-    { keyword: 'hacker', trigger: 'hacker', description: 'Enter hacker terminal' },
-    { keyword: 'hackerman', trigger: 'hackerman', description: 'Enter hacker terminal' },
-    { keyword: 'matrix', trigger: 'matrix', description: 'Enter hacker terminal' },
-    { keyword: 'sudo', trigger: 'sudo', description: 'Enter hacker terminal' },
-    { keyword: 'root', trigger: 'root', description: 'Enter hacker terminal' },
-    { keyword: 'ping', trigger: 'ping', description: 'Try ping pong' },
-    { keyword: 'pong', trigger: 'pong', description: 'Play pong game' },
-    { keyword: 'golf', trigger: 'golf', description: 'Play mini golf' },
-    { keyword: 'play', trigger: 'lets play', description: 'Play pong game' }
+    { keyword: 'hack', trigger: 'hack', description: 'Enter hacker mode' },
+    { keyword: 'hacker', trigger: 'hacker', description: 'Enter hacker mode' },
+    { keyword: 'hackerman', trigger: 'hackerman', description: 'Enter hacker mode' },
+    { keyword: 'matrix', trigger: 'matrix', description: 'Enter hacker mode' },
+    { keyword: 'sudo', trigger: 'sudo', description: 'Enter hacker mode' },
+    { keyword: 'root', trigger: 'root', description: 'Enter hacker mode' }
   ];
 
   static makeClickable(text: string, keyword: string, trigger?: string): string {
@@ -28,7 +24,7 @@ export class EasterEggKeywords {
     return text.replace(new RegExp(`\\b${keyword}\\b`, 'gi'), clickableKeyword);
   }
 
-  static wrapKeywords(text: string, keywords: string[] = ['hack', 'ping', 'pong', 'golf']): string {
+  static wrapKeywords(text: string, keywords: string[] = ['hack']): string {
     let wrappedText = text;
     
     keywords.forEach(keyword => {

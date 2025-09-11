@@ -1,9 +1,7 @@
 import type { Command, CommandResponse, AutocompleteSuggestion } from '@/types';
 import { QuickSuggestions } from '@/ui/QuickSuggestions';
 import { EasterEggKeywords } from '@/ui/EasterEggKeywords';
-import { PongGame } from '@/ui/PongGame';
-import { HackerTerminal } from '@/ui/HackerTerminal';
-import { GolfGame } from '@/ui/GolfGame';
+import { HackerMode } from '@/ui/HackerMode';
 import { analytics } from '@/services/analytics';
 
 export class CommandProcessor {
@@ -11,13 +9,14 @@ export class CommandProcessor {
   private commandsArray: Command[]; // Keep original order
   private history: string[];
   private historyIndex: number;
-  private lastCommand: string | null = null;
+  private hackerMode: HackerMode;
 
   constructor() {
     this.commands = new Map();
     this.commandsArray = [];
     this.history = [];
     this.historyIndex = -1;
+    this.hackerMode = HackerMode.getInstance();
   }
 
   register(command: Command): void {
@@ -37,85 +36,27 @@ export class CommandProcessor {
       };
     }
 
+    // Handle hacker mode commands (without / prefix)
+    if (this.hackerMode.isHackerModeActive() && !trimmedInput.startsWith('/')) {
+      const [cmdName, ...args] = trimmedInput.split(' ');
+      const response = await this.hackerMode.executeHackerCommand(cmdName, args);
+      
+      if (response) {
+        return response;
+      } else {
+        // Show available hacker commands if command not found
+        return {
+          content: `Unknown hacker command: ${cmdName}. Available commands: scan, exploit, decrypt, backdoor, exit`,
+          type: 'text'
+        };
+      }
+    }
+
     // Check if command starts with /
     if (!trimmedInput.startsWith('/')) {
       // Handle easter eggs for non-command input
       const lowerInput = trimmedInput.toLowerCase();
       
-      // Context-aware keyword detection
-      if (this.lastCommand === 'post-pong') {
-        // After showing post-game message, detect golf keywords
-        if (lowerInput.includes('golf') || lowerInput.includes('challenge') || lowerInput === 'yes' || 
-            lowerInput === 'y' || lowerInput === 'sure' || lowerInput === 'ok' || 
-            lowerInput === 'okay' || lowerInput.includes('bring') || lowerInput.includes('game')) {
-          // Launch golf game
-          const content = document.createElement('div');
-          content.className = 'golf-game-container';
-          
-          // Add compact game header
-          const header = document.createElement('div');
-          header.className = 'golf-header';
-          header.innerHTML = `
-            <h2 class="brutal-heading">Mini Golf Challenge 🏌️</h2>
-            <p>You asked for it! 3 holes, see if you can beat par. Touch/aim with mouse, tap/click or SPACE to set power.</p>
-          `;
-          
-          content.appendChild(header);
-          
-          // Initialize the game directly in the main container
-          setTimeout(() => {
-            new GolfGame(content);
-          }, 100);
-          
-          // Track golf game start via easter egg
-          analytics.trackGameStart('golf', 'easter_egg');
-          
-          this.lastCommand = 'golf-game';
-          return {
-            content,
-            type: 'html'
-          };
-        }
-      } else if (this.lastCommand === 'ping') {
-        // After ping command, detect play keywords
-        if (lowerInput.includes('play') || lowerInput === 'yes' || lowerInput === 'y' || 
-            lowerInput === 'sure' || lowerInput === 'ok' || lowerInput === 'okay' ||
-            lowerInput.includes('let') || lowerInput.includes('game')) {
-          // Trigger the pong game
-          const content = document.createElement('div');
-          content.className = 'pong-game-container';
-          
-          // Add game header
-          const header = document.createElement('div');
-          header.className = 'pong-header brutal-box';
-          header.innerHTML = `
-            <h2 class="brutal-heading">Pong Game 🏓</h2>
-            <p>You said yes! Classic Pong time. First to 5 points wins. Use mouse or W/S/↑/↓ keys to control your paddle.</p>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Tip: Run any other command to exit the game.</p>
-          `;
-          
-          content.appendChild(header);
-          
-          // Create game wrapper and initialize game
-          const gameWrapper = document.createElement('div');
-          gameWrapper.className = 'pong-game-wrapper';
-          content.appendChild(gameWrapper);
-          
-          // Initialize the game
-          setTimeout(() => {
-            new PongGame(gameWrapper);
-          }, 100);
-          
-          // Track pong game start via easter egg
-          analytics.trackGameStart('pong', 'easter_egg');
-          
-          this.lastCommand = 'pong-game';
-          return {
-            content,
-            type: 'html'
-          };
-        }
-      }
       
       if (lowerInput === 'hello') {
         const content = document.createElement('div');
@@ -137,7 +78,6 @@ export class CommandProcessor {
         // Track hello easter egg
         analytics.trackEasterEgg('hello', 'hello');
         
-        this.lastCommand = 'hello';
         return {
           content,
           type: 'html'
@@ -145,141 +85,63 @@ export class CommandProcessor {
       }
       
       if (lowerInput === 'ping') {
-        const content = document.createElement('div');
-        const playText = EasterEggKeywords.makeClickable(
-          'You know what, that actually sounds pretty fun. I wish I had someone to play with...',
-          'play',
-          'lets play'
-        );
-        
-        content.innerHTML = `
-          <div class="easter-egg-response">
-            <p><strong>Pong 🏓</strong></p>
-            <p style="margin-top: 1rem;">${playText}</p>
-          </div>
-          ${QuickSuggestions.generate([
-            { command: '/help', label: '/help', description: 'See all available commands' },
-            { command: '/about', label: '/about', description: 'Learn about me' },
-            { command: '/resume', label: '/resume', description: 'View my resume' }
-          ], 'Try These Commands')}
-        `;
-        
-        // Track ping easter egg
-        analytics.trackEasterEgg('ping', 'ping');
-        
-        this.lastCommand = 'ping';
         return {
-          content,
-          type: 'html'
+          content: `Pong! 🏓 Try "/play pong" or just "/play" to see available games.`,
+          type: 'text'
         };
       }
       
-      if (lowerInput === 'lets play') {
-        const content = document.createElement('div');
-        content.className = 'pong-game-container';
-        
-        // Add compact game header
-        const header = document.createElement('div');
-        header.className = 'pong-header';
-        header.innerHTML = `
-          <h2 class="brutal-heading">Pong Game 🏓</h2>
-          <p>Classic Pong! First to 5 points wins. Touch or use mouse/W/S/↑/↓ to control your paddle.</p>
-        `;
-        
-        content.appendChild(header);
-        
-        // Initialize the game directly in the main container
-        setTimeout(() => {
-          new PongGame(content);
-        }, 100);
-        
-        // Track lets play direct pong
-        analytics.trackGameStart('pong', 'direct');
-        
-        this.lastCommand = 'pong-game';
+      // Game easter eggs - redirect to /play command
+      if (lowerInput === 'lets play' || lowerInput === 'play') {
         return {
-          content,
-          type: 'html'
+          content: `Let's play! 🎮 Try "/play" to see available games or "/play pong" to jump right in.`,
+          type: 'text'
         };
       }
       
-      // Pong game easter egg - direct entry  
       if (lowerInput === 'pong' || lowerInput === 'ping pong') {
-        const content = document.createElement('div');
-        content.className = 'pong-game-container';
-        
-        // Add compact game header
-        const header = document.createElement('div');
-        header.className = 'pong-header';
-        header.innerHTML = `
-          <h2 class="brutal-heading">Pong Game 🏓</h2>
-          <p>Found the pong game! First to 5 points wins. Touch or use mouse/W/S/↑/↓ to control your paddle.</p>
-        `;
-        
-        content.appendChild(header);
-        
-        // Initialize the game directly in the main container
-        setTimeout(() => {
-          new PongGame(content);
-        }, 100);
-        
-        // Track direct pong entry
-        analytics.trackGameStart('pong', 'direct');
-        
-        this.lastCommand = 'pong-game';
         return {
-          content,
-          type: 'html'
+          content: `🏓 Try "/play pong" to start a game of Pong!`,
+          type: 'text'
         };
       }
 
-      // Golf game easter egg - direct entry
       if (lowerInput === 'golf' || lowerInput === 'golfer' || lowerInput === 'mini golf' || 
           lowerInput === 'minigolf') {
-        const content = document.createElement('div');
-        content.className = 'golf-game-container';
-        
-        // Add compact game header
-        const header = document.createElement('div');
-        header.className = 'golf-header';
-        header.innerHTML = `
-          <h2 class="brutal-heading">Mini Golf Challenge 🏌️</h2>
-          <p>Found the golf game! 3 holes, see if you can beat par. Touch/aim with mouse, tap/click or SPACE to set power.</p>
-        `;
-        
-        content.appendChild(header);
-        
-        // Initialize the game directly in the main container
-        setTimeout(() => {
-          new GolfGame(content);
-        }, 100);
-        
-        // Track direct golf entry
-        analytics.trackGameStart('golf', 'direct');
-        
-        this.lastCommand = 'golf-game';
         return {
-          content,
-          type: 'html'
+          content: `🏌️ Golf games coming soon! For now, try "/play" to see available games.`,
+          type: 'text'
         };
       }
       
       // Hacker terminal easter egg
       if (lowerInput === 'hack' || lowerInput === 'hacker' || lowerInput === 'hackerman' || 
           lowerInput === 'matrix' || lowerInput === 'sudo' || lowerInput === 'root') {
+        
+        // Enter hacker mode
+        this.hackerMode.enterHackerMode();
+        
         const content = document.createElement('div');
-        content.className = 'hacker-terminal-container';
+        content.className = 'hacker-mode-entry';
         
-        // Initialize the hacker terminal
-        setTimeout(() => {
-          new HackerTerminal(content);
-        }, 100);
+        content.innerHTML = `
+          <div class="hacker-entry-message" style="text-align: center; padding: 2rem;">
+            <h2 style="color: #00ff00; margin: 0 0 .5rem 0; text-shadow: 0 0 10px #00ff00;">
+             HACKED TERMINAL ACCESS GRANTED
+            </h2>
+            <p style="margin: 2rem 0; color: #00ff00; font-family: 'Courier New', monospace;">
+              Welcome.
+            </p>
+            <p style="margin: 0; opacity: 0.8; font-family: 'Courier New', monospace;">
+              Available commands: ls, open [filename], help
+            </p>
+          </div>
+        `;
         
-        // Track hacker terminal entry
-        analytics.trackEasterEgg('hacker_terminal', lowerInput);
+        // Track hacker mode entry
+        analytics.trackEasterEgg('hacker_mode', lowerInput);
         analytics.trackGameStart('hacker', 'direct');
         
-        this.lastCommand = 'hack';
         return {
           content,
           type: 'html'
@@ -287,7 +149,6 @@ export class CommandProcessor {
       }
       
       // Default fallback for other non-command input
-      this.lastCommand = null; // Clear context for unknown input
       return {
         content: `Commands must start with /. Type '/help' for available commands.`,
         type: 'text'
@@ -295,9 +156,6 @@ export class CommandProcessor {
     }
 
     this.addToHistory(trimmedInput);
-    
-    // Clear easter egg context when using regular commands
-    this.lastCommand = null;
 
     // Remove the / prefix and parse command
     const commandPart = trimmedInput.slice(1);
@@ -344,6 +202,11 @@ export class CommandProcessor {
   }
 
   getSuggestions(partial: string): AutocompleteSuggestion[] {
+    // In hacker mode, provide suggestions for hacker commands only
+    if (this.hackerMode.isHackerModeActive()) {
+      return this.getHackerModeSuggestions(partial);
+    }
+
     // If input is just "/", show all commands in original registration order
     if (partial === '/') {
       const suggestions: AutocompleteSuggestion[] = [];
@@ -493,8 +356,85 @@ export class CommandProcessor {
     return null;
   }
 
-  setLastCommand(command: string): void {
-    this.lastCommand = command;
+
+  private getHackerModeSuggestions(partial: string): AutocompleteSuggestion[] {
+    if (!partial || partial.length === 0) {
+      // Show all hacker commands when no input
+      const suggestions: AutocompleteSuggestion[] = [];
+      const hackerCommands = this.hackerMode.getHackerCommands();
+      
+      hackerCommands.forEach((command) => {
+        // Only show decrypt command if there are encrypted files available
+        if (command.name === 'decrypt' && !this.hackerMode.hasEncryptedFiles()) {
+          return; // Skip decrypt command if no encrypted files
+        }
+        
+        suggestions.push({
+          command: command.name,
+          description: command.description,
+          displayText: command.name
+        });
+      });
+      
+      return suggestions;
+    }
+
+    const parts = partial.split(' ');
+    const commandName = parts[0].toLowerCase();
+    const args = parts.slice(1);
+
+    // If we're still typing the command name (no spaces yet)
+    if (parts.length === 1) {
+      const suggestions: AutocompleteSuggestion[] = [];
+      const hackerCommands = this.hackerMode.getHackerCommands();
+      
+      hackerCommands.forEach((command) => {
+        if (command.name.toLowerCase().startsWith(commandName)) {
+          // Only show decrypt command if there are encrypted files available
+          if (command.name === 'decrypt' && !this.hackerMode.hasEncryptedFiles()) {
+            return; // Skip decrypt command if no encrypted files
+          }
+          
+          suggestions.push({
+            command: command.name,
+            description: command.description,
+            displayText: command.name
+          });
+        }
+      });
+      
+      return suggestions;
+    }
+
+    // If we have a complete command name followed by a space, show argument suggestions
+    const hackerCommands = this.hackerMode.getHackerCommands();
+    const command = hackerCommands.get(commandName);
+    
+    if (command && command.suggestions) {
+      const suggestions: AutocompleteSuggestion[] = [];
+      const currentArg = args[args.length - 1] || '';
+      
+      // Add arguments if they match current input
+      if (command.suggestions.arguments) {
+        command.suggestions.arguments.forEach((argument) => {
+          if (argument.name.toLowerCase().startsWith(currentArg.toLowerCase())) {
+            const baseCommand = commandName;
+            const existingArgs = args.slice(0, -1);
+            const fullCommand = `${baseCommand} ${existingArgs.join(' ')} ${argument.name}`.trim();
+            
+            suggestions.push({
+              command: fullCommand,
+              description: argument.description,
+              displayText: argument.name
+            });
+          }
+        });
+      }
+      
+      return suggestions;
+    }
+
+    return [];
   }
 
   /**
