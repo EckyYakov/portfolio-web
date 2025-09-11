@@ -4,6 +4,7 @@ import { Autocomplete } from './Autocomplete';
 import { CommandHistory } from './CommandHistory';
 import { DeviceDetector } from '@/utils/device';
 import { BinaryTransition } from '@/utils/binaryTransition';
+import { QuickSuggestions } from './QuickSuggestions';
 import type { CommandResponse } from '@/types';
 
 export class Terminal {
@@ -31,7 +32,20 @@ export class Terminal {
     // Initialize command history with placeholders to prevent height changes
     this.commandHistory.render();
     
+    // Show initial quick commands for better first-time UX
+    this.showInitialQuickCommands();
+    
     this.handleInitialRoute();
+  }
+
+  private showInitialQuickCommands(): void {
+    // Display quick commands for first-time users
+    this.output.innerHTML = QuickSuggestions.generate([
+      { command: '/about', label: '/about', description: 'Learn more about me personally' },
+      { command: '/resume', label: '/resume', description: 'View my professional background' },
+      { command: '/contact', label: '/contact', description: 'Get in touch with me' },
+      { command: '/help', label: '/help', description: 'See all available commands' }
+    ], 'Quick Commands');
   }
 
   private setupUI(): void {
@@ -67,6 +81,11 @@ export class Terminal {
     this.inputWrapper = this.container.querySelector('.input-wrapper')!;
     this.autocomplete.setContainer(this.container.querySelector('.autocomplete-container')!);
     this.commandHistory.setContainer(this.container.querySelector('.command-history-container')!);
+    
+    // Set mobile-friendly placeholder text
+    if (DeviceDetector.isMobile()) {
+      this.input.placeholder = "Type /help to start or say 'hello'";
+    }
   }
 
   private setupEventListeners(): void {

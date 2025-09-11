@@ -29,8 +29,8 @@ export class QuickSuggestions {
   // Predefined suggestion sets for common use cases
   static readonly MAIN_NAVIGATION: SuggestionConfig[] = [
     { command: '/resume', label: '/resume', description: 'View my full professional background' },
-    { command: '/resume skills', label: '/resume skills', description: 'View my technical skills' },
-    { command: '/resume projects', label: '/resume projects', description: 'View my selected projects' },
+    { command: '/contact', label: '/contact', description: 'Get in touch with me' },
+    { command: '/theme', label: '/theme', description: 'Customize the look of the website' },
     { command: '/help', label: '/help', description: 'See all available commands' }
   ];
   

@@ -205,7 +205,7 @@ function generateExperienceSection(workExperience: any[], subcommand?: string): 
   
   let sectionTitle = 'Experience';
   if (subcommand === 'recent') {
-    sectionTitle = 'Recent Experience';
+    sectionTitle = 'Most Recent Experience';
   } else if (subcommand === 'full-time') {
     sectionTitle = 'Full-Time Experience';
   } else if (subcommand === 'consulting') {

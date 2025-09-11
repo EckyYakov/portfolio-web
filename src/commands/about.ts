@@ -14,15 +14,17 @@ export const aboutCommand: Command = {
         <h2 class="brutal-heading">About Me</h2>
         <div class="about-text">
           <p>
-            Hi! I'm Evan Steitz, a Product and Engineering leader and full-stack developer with expertise 
-            in building teams, scaling systems, and delivering 0→1 product initiatives.
+            I'm a software engineer, game designer, and leader who loves building things. Whether it's a SaaS, developer tools, business processes or video games; I get excited about solving tricky problems and making experiences that people enjoy.
+          </p>
+        </div>
+        
+        <h3 class="brutal-heading">Beyond Work</h3>
+        <div class="about-text">
+          <p>
+            Games have always been a big part of my life. I grew up playing sports and later got hooked on competitive games like League of Legends, where I even spent some time as a shoutcaster. Over the years, I've created a variety of games myself — from a drinking card game to a video game released on Steam — and I'm currently building a baseball simulation game called <a href="https://tiny-teams.com?utm_source=evansteitz.com&utm_medium=portfolio&utm_campaign=about_page&utm_content=tiny_teams_link" target="_blank" rel="noopener noreferrer">Tiny Teams</a>.
           </p>
           <p>
-            This interactive command-line portfolio showcases my work and experience in a unique way. 
-            Please explore using the available commands!
-          </p>
-          <p>
-            I specialize in engineering leadership, team management, and building awesome products.
+            Outside of tech and game design, my life mostly revolves around my family. I have two young boys who keep me on my toes and make sure things are never boring. I stil try to stay active with sports, mostly Golf and Hockey. And I try to push myself to learn or do something new every day.
           </p>
         </div>
       </div>

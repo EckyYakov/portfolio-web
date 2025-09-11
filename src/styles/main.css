@@ -914,6 +914,33 @@ body {
   box-shadow: 3px 3px 0 var(--color-shadow);
 }
 
+/* External Link Styles */
+.about-text a, 
+.external-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-accent);
+  transition: all 0.2s ease;
+}
+
+.about-text a:hover,
+.external-link:hover {
+  color: var(--color-accent-alt);
+  border-bottom-color: var(--color-accent-alt);
+  transform: translateY(-1px);
+}
+
+.about-text a::after,
+.external-link::after {
+  content: '\f08e';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  margin-left: 0.3rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
 /* Resume Command Styles */
 .resume-content {
   padding: 0;
@@ -1322,6 +1349,18 @@ body {
   
   .action-btn i {
     font-size: 0.9rem;
+  }
+
+  /* Fix for mobile active state getting stuck */
+  .action-btn:active {
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--color-shadow);
+    transition: all 0.1s ease;
+  }
+
+  /* Ensure proper reset after touch */
+  .action-btn {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -2186,9 +2225,11 @@ body {
     margin-bottom: 0.5rem;
   }
 
-  /* Hide keyboard hint on mobile */
+  /* Show keyboard hints on mobile with adjusted styling */
   .key-hint {
-    display: none;
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.8rem;
   }
 
   /* Command history adjustments - minimal changes */
