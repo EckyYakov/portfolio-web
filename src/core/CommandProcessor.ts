@@ -4,6 +4,7 @@ import { EasterEggKeywords } from '@/ui/EasterEggKeywords';
 import { PongGame } from '@/ui/PongGame';
 import { HackerTerminal } from '@/ui/HackerTerminal';
 import { GolfGame } from '@/ui/GolfGame';
+import { analytics } from '@/services/analytics';
 
 export class CommandProcessor {
   private commands: Map<string, Command>;
@@ -66,6 +67,9 @@ export class CommandProcessor {
             new GolfGame(content);
           }, 100);
           
+          // Track golf game start via easter egg
+          analytics.trackGameStart('golf', 'easter_egg');
+          
           this.lastCommand = 'golf-game';
           return {
             content,
@@ -102,6 +106,9 @@ export class CommandProcessor {
             new PongGame(gameWrapper);
           }, 100);
           
+          // Track pong game start via easter egg
+          analytics.trackGameStart('pong', 'easter_egg');
+          
           this.lastCommand = 'pong-game';
           return {
             content,
@@ -126,6 +133,10 @@ export class CommandProcessor {
           ${QuickSuggestions.generate(QuickSuggestions.HELP_RELATED, 'Quick Commands')}
           <p style="margin-top: 1rem; font-style: italic;">Type any command starting with "/" to explore!</p>
         `;
+        
+        // Track hello easter egg
+        analytics.trackEasterEgg('hello', 'hello');
+        
         this.lastCommand = 'hello';
         return {
           content,
@@ -152,6 +163,10 @@ export class CommandProcessor {
             { command: '/resume', label: '/resume', description: 'View my resume' }
           ], 'Try These Commands')}
         `;
+        
+        // Track ping easter egg
+        analytics.trackEasterEgg('ping', 'ping');
+        
         this.lastCommand = 'ping';
         return {
           content,
@@ -177,6 +192,9 @@ export class CommandProcessor {
         setTimeout(() => {
           new PongGame(content);
         }, 100);
+        
+        // Track lets play direct pong
+        analytics.trackGameStart('pong', 'direct');
         
         this.lastCommand = 'pong-game';
         return {
@@ -204,6 +222,9 @@ export class CommandProcessor {
         setTimeout(() => {
           new PongGame(content);
         }, 100);
+        
+        // Track direct pong entry
+        analytics.trackGameStart('pong', 'direct');
         
         this.lastCommand = 'pong-game';
         return {
@@ -233,6 +254,9 @@ export class CommandProcessor {
           new GolfGame(content);
         }, 100);
         
+        // Track direct golf entry
+        analytics.trackGameStart('golf', 'direct');
+        
         this.lastCommand = 'golf-game';
         return {
           content,
@@ -250,6 +274,10 @@ export class CommandProcessor {
         setTimeout(() => {
           new HackerTerminal(content);
         }, 100);
+        
+        // Track hacker terminal entry
+        analytics.trackEasterEgg('hacker_terminal', lowerInput);
+        analytics.trackGameStart('hacker', 'direct');
         
         this.lastCommand = 'hack';
         return {
@@ -277,6 +305,10 @@ export class CommandProcessor {
     const command = this.commands.get(cmdName.toLowerCase());
 
     if (!command) {
+      // Track command not found
+      analytics.trackCommand(cmdName, 'navigation', args.length > 0, false);
+      analytics.trackError('command_not_found', `Command not found: /${cmdName}`, cmdName);
+      
       return {
         content: `Command not found: /${cmdName}. Type '/help' for available commands.`,
         type: 'text'
@@ -284,10 +316,18 @@ export class CommandProcessor {
     }
 
     try {
+      // Track successful command execution
+      const commandType = this.getCommandType(command.name);
+      analytics.trackCommand(command.name, commandType, args.length > 0, true);
+      
       return await command.handler(args);
     } catch (error) {
+      // Track command execution error
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      analytics.trackError('command_execution_error', errorMessage, command.name);
+      
       return {
-        content: `Error executing command: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        content: `Error executing command: ${errorMessage}`,
         type: 'text'
       };
     }
@@ -455,6 +495,24 @@ export class CommandProcessor {
 
   setLastCommand(command: string): void {
     this.lastCommand = command;
+  }
+
+  /**
+   * Determine the command type for analytics tracking
+   */
+  private getCommandType(commandName: string): 'navigation' | 'utility' | 'easter_egg' | 'game' {
+    switch (commandName.toLowerCase()) {
+      case 'help':
+      case 'about':
+      case 'resume':
+      case 'contact':
+        return 'navigation';
+      case 'clear':
+      case 'theme':
+        return 'utility';
+      default:
+        return 'navigation';
+    }
   }
 
 }

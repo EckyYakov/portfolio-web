@@ -1,4 +1,5 @@
 import type { Theme } from '@/types';
+import { analytics } from '@/services/analytics';
 
 export class ThemeManager {
   private static instance: ThemeManager;
@@ -128,9 +129,16 @@ export class ThemeManager {
 
   setTheme(themeName: string): boolean {
     if (this.themes[themeName]) {
+      const previousTheme = this.currentTheme;
       this.currentTheme = themeName;
       localStorage.setItem('theme', this.currentTheme);
       this.applyTheme();
+      
+      // Track theme change
+      if (previousTheme !== themeName) {
+        analytics.trackThemeChange(themeName);
+      }
+      
       return true;
     }
     return false;

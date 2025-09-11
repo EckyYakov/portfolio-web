@@ -1,5 +1,6 @@
 import { CommandProcessor } from '@/core/CommandProcessor';
 import type { AutocompleteSuggestion } from '@/types';
+import { analytics } from '@/services/analytics';
 
 export class Autocomplete {
   private container: HTMLElement | null = null;
@@ -74,6 +75,11 @@ export class Autocomplete {
       input.value = suggestion.command;
       input.focus();
       this.hide();
+      
+      // Track autocomplete usage
+      const commandName = suggestion.command.split(' ')[0].replace('/', '');
+      const position = this.selectedIndex >= 0 ? this.selectedIndex : this.currentSuggestions.findIndex(s => s.command === suggestion.command);
+      analytics.trackAutocompleteUsage(commandName, position);
       
       if (executeCommand) {
         // Trigger command execution by dispatching an event

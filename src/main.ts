@@ -3,6 +3,7 @@ import { CommandProcessor } from './core/CommandProcessor';
 import { Terminal } from './ui/Terminal';
 import { ThemeManager } from './ui/ThemeManager';
 import { commands } from './commands';
+import { analytics } from './services/analytics';
 
 declare global {
   interface Window {
@@ -31,6 +32,9 @@ function init() {
   
   // Make terminal globally accessible for debugging and command execution
   window.terminal = terminal;
+  
+  // Track session start
+  analytics.trackSessionStart();
 }
 
 // Initialize when DOM is ready

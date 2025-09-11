@@ -46,7 +46,7 @@ export class Terminal {
           <input 
             type="text" 
             class="command-input" 
-            placeholder="Type /help to start... or you could just say hello"
+            placeholder="Type /help to start... or you could just say 'hello'"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"

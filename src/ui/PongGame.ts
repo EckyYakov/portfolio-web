@@ -1,4 +1,5 @@
 import { EasterEggKeywords } from './EasterEggKeywords';
+import { analytics } from '@/services/analytics';
 
 interface Paddle {
   x: number;
@@ -65,6 +66,9 @@ export class PongGame {
   private readonly WINNING_SCORE = 5;
   private scaleFactor!: number;
   private gamepadStatusElement: HTMLDivElement | null = null;
+  
+  // Analytics tracking
+  private gameStartTime: number = 0;
   
   constructor(container: HTMLElement) {
     this.container = container;
@@ -343,6 +347,9 @@ export class PongGame {
     this.resetBall();
     // Refresh gamepad connection each time the game starts
     this.refreshGamepadConnection();
+    
+    // Track game start
+    this.gameStartTime = Date.now();
   }
   
   private resetGame(): void {
@@ -604,17 +611,21 @@ export class PongGame {
     if (this.ball.x < 0) {
       // AI scores
       this.score.ai++;
+      analytics.trackGameAction('pong', 'ai_score', this.score.ai);
       this.resetBall();
       if (this.score.ai >= this.WINNING_SCORE) {
         this.gameState = 'gameover';
+        this.trackGameEnd(false);
         this.showPostGameMessage();
       }
     } else if (this.ball.x > this.canvasWidth) {
       // Player scores
       this.score.player++;
+      analytics.trackGameAction('pong', 'player_score', this.score.player);
       this.resetBall();
       if (this.score.player >= this.WINNING_SCORE) {
         this.gameState = 'gameover';
+        this.trackGameEnd(true);
         this.showPostGameMessage();
       }
     }
@@ -647,6 +658,14 @@ export class PongGame {
       // Set context for the command processor
       window.dispatchEvent(new CustomEvent('pong-game-ended'));
     }, 2000); // Show after 2 seconds
+  }
+
+  private trackGameEnd(playerWon: boolean): void {
+    const duration = Date.now() - this.gameStartTime;
+    const totalScore = this.score.player + this.score.ai;
+    
+    analytics.trackGameEnd('pong', duration, totalScore, true);
+    analytics.trackGameAction('pong', playerWon ? 'player_win' : 'ai_win', playerWon ? this.score.player : this.score.ai);
   }
   
   private render(): void {

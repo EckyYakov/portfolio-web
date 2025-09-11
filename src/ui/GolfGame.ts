@@ -1,3 +1,5 @@
+import { analytics } from '@/services/analytics';
+
 interface GolfBall {
   x: number;
   y: number;
@@ -46,6 +48,9 @@ export class GolfGame {
   // private keys: Set<string> = new Set();
   private mouseX: number = 0;
   private mouseY: number = 0;
+  
+  // Analytics tracking
+  private gameStartTime: number = 0;
 
   constructor(container: HTMLElement) {
     // Create canvas
@@ -74,6 +79,9 @@ export class GolfGame {
     
     // Start game loop
     this.start();
+    
+    // Track game start
+    this.gameStartTime = Date.now();
   }
 
   private setupResponsiveCanvas(): void {
@@ -170,6 +178,9 @@ export class GolfGame {
     this.ball.vy = Math.sin(this.aimAngle) * powerMultiplier;
     this.ball.isMoving = true;
     
+    // Track shot
+    analytics.trackGameAction('golf', 'shot_taken', this.strokes);
+    
     this.gameState = 'ball-moving';
   }
 
@@ -230,14 +241,31 @@ export class GolfGame {
   private completeHole(): void {
     this.gameState = 'hole-complete';
     
+    // Track hole completion
+    analytics.trackGameAction('golf', 'hole_complete', this.strokes);
+    analytics.trackGameAction('golf', `hole_${this.currentHole}_strokes`, this.strokes);
+    
     setTimeout(() => {
       if (this.currentHole < this.totalHoles) {
         this.currentHole++;
+        this.strokes = 0; // Reset strokes for new hole
         this.initializeHole();
       } else {
         this.gameState = 'game-complete';
+        this.trackGameEnd();
       }
     }, 2000);
+  }
+
+  private trackGameEnd(): void {
+    const duration = Date.now() - this.gameStartTime;
+    
+    analytics.trackGameEnd('golf', duration, this.totalStrokes, true);
+    analytics.trackGameAction('golf', 'game_complete', this.totalStrokes);
+    
+    // Calculate average strokes per hole
+    const averageStrokes = Math.round((this.totalStrokes / this.totalHoles) * 100) / 100;
+    analytics.trackGameAction('golf', 'average_strokes_per_hole', averageStrokes);
   }
 
   private render(): void {
