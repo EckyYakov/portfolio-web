@@ -282,8 +282,8 @@ export class Terminal {
       if (!isGameContent) {
         // Apply binary transition to non-game HTML content
         await BinaryTransition.animateElement(response.content, {
-          delay: 2000,
-          charDelay: 8,
+          delay: 1200,
+          charDelay: 7,
           preserveHtml: true
         });
       }
@@ -315,8 +315,8 @@ export class Terminal {
       
       // Apply binary transition to text content
       await BinaryTransition.animateElement(contentDiv, {
-        delay: 400,
-        charDelay: 10,
+        delay: 300,
+        charDelay: 8,
         preserveHtml: false
       });
     }

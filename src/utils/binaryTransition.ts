@@ -26,8 +26,8 @@ export class BinaryTransition {
     
     // Adaptive timing based on previous animations and performance
     const isFirstAnimation = this.animationCount === 1;
-    const baseDelay = isFirstAnimation ? 400 : 200; // Faster subsequent animations
-    const baseCharDelay = this.isReducedMotion ? 4 : 8; // Faster on reduced motion
+    const baseDelay = isFirstAnimation ? 300 : 150; // Faster subsequent animations
+    const baseCharDelay = this.isReducedMotion ? 3 : 6; // Faster on reduced motion
     
     const {
       delay = baseDelay,
@@ -263,7 +263,7 @@ export class BinaryTransition {
       
       const revealNextChar = () => {
         // Reveal multiple characters per frame for much faster animation
-        const charsPerFrame = 3;
+        const charsPerFrame = 4;
         let revealed = 0;
         
         while (revealed < charsPerFrame && index < chars.length) {
@@ -334,7 +334,7 @@ export class BinaryTransition {
         const currentText = currentNode.textContent || '';
         
         // Reveal multiple characters per frame for HTML content too
-        const charsPerFrame = 4;
+        const charsPerFrame = 5;
         let revealed = 0;
         
         while (revealed < charsPerFrame && charIndex < originalText.length) {
