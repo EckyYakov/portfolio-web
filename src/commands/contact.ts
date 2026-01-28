@@ -10,7 +10,7 @@ export const contactCommand: Command = {
     content.className = 'contact-content';
     
     // Contact information
-    const email = 'ejsteitz@gmail.com';
+    const email = 'evan.steitz@protonmail.com';
     const github = 'eckyyakov';
     const web3formsKey = '65edd7d2-eb25-4004-9eda-0ab0e2a1ab70';
     const subject = encodeURIComponent('Hello from your Portfolio Site');
